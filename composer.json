@@ -1,0 +1,27 @@
+{
+  "name": "justcoded/yii2-morph",
+  "description": "Yii2 Morph relations support",
+  "type": "yii2-extension",
+  "keywords": [
+    "yii2",
+    "extension",
+    "morph",
+    "active record",
+    "morph relation"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alex Prokopenko",
+      "email": "aprokopenko@justcoded.com"
+    }
+  ],
+  "require": {
+    "yiisoft/yii2": "~2.0.12",
+  },
+  "autoload": {
+    "psr-4": {
+      "justcoded\\yii2\\morph\\": "src/"
+    }
+  }
+}
