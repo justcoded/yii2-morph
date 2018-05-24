@@ -6,7 +6,7 @@
  * Time: 18:56
  */
 
-namespace justcoded\yii2\filestorage\db;
+namespace justcoded\yii2\morph\db;
 
 use yii\base\Behavior;
 

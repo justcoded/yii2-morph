@@ -18,10 +18,21 @@
   ],
   "require": {
     "yiisoft/yii2": "~2.0.12",
+    "yiisoft/yii2-faker": "~2.0.0"
+  },
+  "require-dev": {
+    "yiisoft/yii2-debug": "~2.0.6",
+
+    "codeception/base": "^2.2.3",
+    "codeception/specify": "0.4.*",
+    "codeception/verify": "0.2.*"
   },
   "autoload": {
     "psr-4": {
       "justcoded\\yii2\\morph\\": "src/"
     }
+  },
+  "scripts": {
+    "test": "./vendor/bin/codecept run"
   }
 }

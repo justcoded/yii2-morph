@@ -1,8 +1,7 @@
 <?php
 
-namespace justcoded\yii2\filestorage\db;
+namespace justcoded\yii2\morph\db;
 
-use app\models\ActiveRecord;
 use yii\db\ActiveQuery;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
@@ -16,15 +15,15 @@ trait MorphRelationsTrait
 
 	/**
 	 * [MO] Set one-to-one relation from morph object to object.
-	 *
-	 * @param ActiveRecord|string $class Class name of model for make relation.
+	 *ы
 	 * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
 	 *
 	 * @return ActiveQuery the relational query object.
 	 */
-	public function morphToOne($class, $morphName)
+	public function morphToOne($morphName)
 	{
 		$morphName = $this->normalizeMorphFields($morphName);
+        $class = self::class;
 
 		return $this->hasOne($class, ['id' => $morphName[1]])->onCondition([$morphName[0] => $class]);
 	}
