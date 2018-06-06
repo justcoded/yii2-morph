@@ -5,7 +5,7 @@ namespace app\models;
 use justcoded\yii2\morph\db\MorphRelationsTrait;
 
 /**
- * Class Post
+ * Class User
  *
  * @package justcoded\yii2\tests\app\models
  */
@@ -26,9 +26,61 @@ class User extends \yii\db\ActiveRecord
 
 	/**
 	 * Get all of the post's comments.
+	 *
+	 * @return \yii\db\ActiveQuery
 	 */
 	public function getComments()
 	{
 		return $this->morphMany(Comment::class, 'commentable');
+	}
+
+	/**
+	 * Get all tags.
+	 *
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getTags()
+	{
+		return $this->morphMany(Tag::class, 'taggable', [], 'taggable', ['id' => 'tag_id']);
+	}
+
+	/**
+	 * Get all billing addresses.
+	 *
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getBillingAddresses()
+	{
+		return $this->morphMany(Address::class, 'addressable', ['type' => Address::TYPE_BILLING]);
+	}
+
+	/**
+	 * Get all shipping addresses.
+	 *
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getShippingAddresses()
+	{
+		return $this->morphMany(Address::class, 'addressable', ['type' => Address::TYPE_SHIPPING]);
+	}
+
+	/**
+	 * Get user thumbnail.
+	 *
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getThumbnail()
+	{
+		return $this->morphOne(Media::class, 'mediable', ['type' => 'thumbnail'], 'mediable', ['id' => 'media_id']);
+	}
+
+	/**
+	 * Get all media from user gallery.
+	 *
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getGallery()
+	{
+		return $this->morphMany(Media::class, 'mediable', ['type' => 'gallery'], 'mediable', ['id' => 'media_id']);
 	}
 }

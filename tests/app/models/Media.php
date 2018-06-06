@@ -5,14 +5,14 @@ namespace app\models;
 use justcoded\yii2\morph\db\MorphRelationsTrait;
 
 /**
- * Class Answer
+ * Class Media
  *
  * @package justcoded\yii2\tests\app\models
  */
 class Media extends \yii\db\ActiveRecord
 {
 	use MorphRelationsTrait;
-
+	
 	/**
 	 * @inheritdoc
 	 */

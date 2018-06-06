@@ -36,7 +36,7 @@ trait MorphRelationsTrait
 	 * @param string|null $viaLink Name of foreign key to morph table.
 	 * @param array $extraCondition Extra condition for filtering.
 	 *
-	 * @return array of ActiveQuery elements like ['entity1'=>hasMany(),'entity2'=>hasMany()].
+	 * @return \yii\db\ActiveQuery[] of ActiveQuery elements like ['entity1'=>hasMany(),'entity2'=>hasMany()].
 	 */
 	public function morphToMany($morphName, $viaTable, $viaLink, $extraCondition = [])
 	{

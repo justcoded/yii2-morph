@@ -27,8 +27,10 @@ class Comment extends \yii\db\ActiveRecord
 
 	/**
 	 * Get all of the owning commentable post models.
+	 *
+	 * @return \yii\db\ActiveQuery
 	 */
-	public function commentable()
+	public function getCommentable()
 	{
 		return $this->morphToOne('commentable');
 	}

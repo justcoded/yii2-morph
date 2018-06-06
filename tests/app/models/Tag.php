@@ -26,17 +26,12 @@ class Tag extends \yii\db\ActiveRecord
 
 	/**
 	 * Get all of the answers that are assigned this tag.
+	 *
+	 * @return \yii\db\ActiveQuery[]
 	 */
-	public function getAnswers()
+	public function getTaggable()
 	{
-		return $this->morphMany(Answer::class, 'taggable');
+		return $this->morphToMany('taggable', 'taggable', 'tag_id');
 	}
 
-	/**
-	 * Get all of the questions that are assigned this tag.
-	 */
-	public function getQuestions()
-	{
-		return $this->morphMany(Question::class, ['taggable_id', 'taggable_type'], [], 'taggable', 'tag_id');
-	}
 }
