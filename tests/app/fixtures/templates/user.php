@@ -5,6 +5,7 @@
  */
 
 return [
-	'id'   => $index + 1,
-	'name' => $faker->word,
+	'id'    => $index + 1,
+	'name'  => $faker->name,
+	'email' => $faker->email,
 ];

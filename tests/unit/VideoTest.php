@@ -3,8 +3,8 @@
 namespace tests\unit;
 
 use Yii;
-use app\fixtures\VideoFixture;
-use app\models\Video;
+use app\fixtures\CompanyFixture;
+use app\models\Company;
 
 /**
  * Class VideoTest
@@ -31,8 +31,8 @@ class VideoTest extends \Codeception\Test\Unit
     {
         return [
             'video' => [
-                'class' => VideoFixture::class,
-                'dataFile' => dirname(__DIR__) . '/app/fixtures/data/video.php'
+				'class' => CompanyFixture::class,
+				'dataFile' => dirname(__DIR__) . '/app/fixtures/data/video.php'
             ],
         ];
     }
@@ -52,7 +52,7 @@ class VideoTest extends \Codeception\Test\Unit
      */
     public function testVideoMorph()
     {
-        $video = Video::findOne($this->validVideo['id']);
+        $video = Company::findOne($this->validVideo['id']);
 
         $video->getComments();
     }

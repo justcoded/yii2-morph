@@ -14,9 +14,9 @@ class m180515_141757_create_comment_table extends Migration
 	{
 		$this->createTable('comment', [
 			'id'               => $this->primaryKey(),
-			'body'             => $this->text(),
 			'commentable_id'   => $this->integer(),
-			'commentable_type' => $this->string()
+			'commentable_type' => $this->string(),
+			'body'             => $this->text(),
 		]);
 
 		$this->createIndex('idx_commentable_id', 'comment', 'commentable_id');

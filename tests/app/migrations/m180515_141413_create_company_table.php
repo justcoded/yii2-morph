@@ -5,17 +5,16 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `video`.
  */
-class m180515_141413_create_video_table extends Migration
+class m180515_141413_create_company_table extends Migration
 {
 	/**
 	 * {@inheritdoc}
 	 */
 	public function safeUp()
 	{
-		$this->createTable('video', [
+		$this->createTable('company', [
 			'id'    => $this->primaryKey(),
-			'title' => $this->string(),
-			'url'   => $this->string()
+			'name' => $this->string(),
 		]);
 	}
 
@@ -24,6 +23,6 @@ class m180515_141413_create_video_table extends Migration
 	 */
 	public function safeDown()
 	{
-		$this->dropTable('video');
+		$this->dropTable('company');
 	}
 }

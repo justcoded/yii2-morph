@@ -5,17 +5,17 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `post`.
  */
-class m180515_140540_create_post_table extends Migration
+class m180515_140540_create_user_table extends Migration
 {
 	/**
 	 * {@inheritdoc}
 	 */
 	public function safeUp()
 	{
-		$this->createTable('post', [
+		$this->createTable('user', [
 			'id'    => $this->primaryKey(),
-			'title' => $this->string(),
-			'body'  => $this->text()
+			'name' => $this->string(),
+			'email'  => $this->string(),
 		]);
 	}
 
@@ -24,6 +24,6 @@ class m180515_140540_create_post_table extends Migration
 	 */
 	public function safeDown()
 	{
-		$this->dropTable('post');
+		$this->dropTable('user');
 	}
 }

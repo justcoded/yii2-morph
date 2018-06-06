@@ -9,7 +9,7 @@ use justcoded\yii2\morph\db\MorphRelationsTrait;
  *
  * @package justcoded\yii2\tests\app\models\
  */
-class Video extends \yii\db\ActiveRecord
+class Company extends \yii\db\ActiveRecord
 {
 	use MorphRelationsTrait;
 
@@ -19,8 +19,8 @@ class Video extends \yii\db\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['title', 'url'], 'required'],
-			[['title', 'url'], 'string']
+			[['name'], 'required'],
+			[['name'], 'string']
 		];
 	}
 

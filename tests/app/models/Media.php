@@ -5,11 +5,11 @@ namespace app\models;
 use justcoded\yii2\morph\db\MorphRelationsTrait;
 
 /**
- * Class Taggable
+ * Class Answer
  *
  * @package justcoded\yii2\tests\app\models
  */
-class Taggable extends \yii\db\ActiveRecord
+class Media extends \yii\db\ActiveRecord
 {
 	use MorphRelationsTrait;
 
@@ -19,9 +19,11 @@ class Taggable extends \yii\db\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['taggable_type', 'tag_id', 'taggable_id'], 'required'],
-			[['tag_id', 'taggable_id'], 'string'],
-			[['taggable_type'], 'string']
+			[['type', 'file', 'thumb'], 'required'],
+			[['type', 'file', 'thumb'], 'string'],
+			[['type'], 'in', 'range' => ['image', 'video', 'file']],
 		];
 	}
+
+
 }

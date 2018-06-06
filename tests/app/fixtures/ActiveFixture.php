@@ -21,7 +21,7 @@ abstract class ActiveFixture extends \yii\test\ActiveFixture
 	{
 		$this->data = [];
 		$table      = $this->getTableSchema();
-		// we will check that our fixture data has real db column keys and ignore missing in DB
+		// we will check that our fixture data has real db column keys and ignore missing in DB.
 		$columns = array_keys($table->columns);
 		$columns = array_flip($columns);
 		foreach ($this->getData() as $alias => $row) {

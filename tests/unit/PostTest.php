@@ -3,8 +3,8 @@
 namespace tests\unit;
 
 use Yii;
-use app\fixtures\PostFixture;
-use app\models\Post;
+use app\fixtures\UserFixture;
+use app\models\User;
 
 /**
  * Class PostTest
@@ -31,8 +31,8 @@ class PostTest extends \Codeception\Test\Unit
     {
         return [
             'post' => [
-                'class' => PostFixture::class,
-                'dataFile' => dirname(__DIR__) . '/app/fixtures/data/post.php'
+				'class' => UserFixture::class,
+				'dataFile' => dirname(__DIR__) . '/app/fixtures/data/post.php'
             ],
         ];
     }
@@ -52,7 +52,7 @@ class PostTest extends \Codeception\Test\Unit
      */
     public function testPostMorph()
     {
-        $post = Post::findOne($this->validPost['id']);
+        $post = User::findOne($this->validPost['id']);
 
         $post->getComments();
     }

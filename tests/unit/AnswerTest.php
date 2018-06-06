@@ -3,7 +3,7 @@
 namespace tests\unit;
 
 use Yii;
-use app\fixtures\AnswerFixture;
+use app\fixtures\AllFixture;
 use app\models\Answer;
 
 /**
@@ -31,8 +31,8 @@ class AnswerTest extends \Codeception\Test\Unit
     {
         return [
             'answer' => [
-                'class' => AnswerFixture::class,
-                'dataFile' => dirname(__DIR__) . '/app/fixtures/data/answer.php'
+				'class' => AllFixture::class,
+				'dataFile' => dirname(__DIR__) . '/app/fixtures/data/answer.php'
             ],
         ];
     }

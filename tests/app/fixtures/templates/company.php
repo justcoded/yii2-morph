@@ -5,6 +5,6 @@
  */
 
 return [
-	'title' => $faker->text,
-	'url'   => $faker->url,
+	'id'    => $index + 1,
+	'name'  => $faker->company,
 ];
