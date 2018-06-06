@@ -7,23 +7,23 @@ use yii\db\Migration;
  */
 class m180515_140540_create_post_table extends Migration
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function safeUp()
-    {
-        $this->createTable('post', [
-            'id' => $this->primaryKey(),
-            'title' => $this->string(),
-            'body' => $this->text()
-        ]);
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function safeUp()
+	{
+		$this->createTable('post', [
+			'id'    => $this->primaryKey(),
+			'title' => $this->string(),
+			'body'  => $this->text()
+		]);
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeDown()
-    {
-        $this->dropTable('post');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function safeDown()
+	{
+		$this->dropTable('post');
+	}
 }

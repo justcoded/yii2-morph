@@ -5,6 +5,6 @@
  */
 
 return [
-    'title' => $faker->jobTitle,
-    'body' => $faker->text,
+	'title' => $faker->jobTitle,
+	'body'  => $faker->text,
 ];

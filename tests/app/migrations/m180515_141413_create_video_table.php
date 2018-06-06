@@ -7,23 +7,23 @@ use yii\db\Migration;
  */
 class m180515_141413_create_video_table extends Migration
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function safeUp()
-    {
-        $this->createTable('video', [
-            'id' => $this->primaryKey(),
-            'title' => $this->string(),
-            'url' => $this->string()
-        ]);
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function safeUp()
+	{
+		$this->createTable('video', [
+			'id'    => $this->primaryKey(),
+			'title' => $this->string(),
+			'url'   => $this->string()
+		]);
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeDown()
-    {
-        $this->dropTable('video');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function safeDown()
+	{
+		$this->dropTable('video');
+	}
 }

@@ -5,5 +5,5 @@
  */
 
 return [
-    'name' => $faker->jobTitle,
+	'name' => $faker->jobTitle,
 ];

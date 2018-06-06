@@ -6,5 +6,5 @@
 
 return [
 	'title' => $faker->text,
-	'url' => $faker->url,
+	'url'   => $faker->url,
 ];
