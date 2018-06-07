@@ -6,9 +6,7 @@ class_name: UnitTester
 modules:
     enabled:
         - Yii2:
-            part: [orm, email, fixtures]
-        - Asserts
-        - \Helper\Unit
+            part: [orm, fixtures]
     config:
         Yii2:
           configFile: 'tests/app/config/console.php'

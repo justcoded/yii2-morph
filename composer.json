@@ -16,6 +16,7 @@
       "email": "aprokopenko@justcoded.com"
     }
   ],
+  "prefer-stable": true,
   "require": {
     "yiisoft/yii2": "~2.0.12"
   },
@@ -23,15 +24,20 @@
     "yiisoft/yii2-debug": "~2.0.6",
     "yiisoft/yii2-faker": "~2.0.0",
 
-    "codeception/base": "^2.2.3",
-    "codeception/specify": "0.4.*",
-    "codeception/verify": "0.2.*"
+    "codeception/base": "2.4.1",
+    "codeception/verify": "~0.3.1"
   },
   "autoload": {
     "psr-4": {
       "justcoded\\yii2\\morph\\": "src/"
     }
   },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
   "scripts": {
     "test": "./vendor/bin/codecept run"
   }

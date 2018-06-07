@@ -18,7 +18,6 @@ modules:
             dsn: 'mysql:host=localhost;dbname=yii2_morph'
             user: 'root'
             password: '12345'
-            dump: tests/_data/dump.sql
         Yii2:
-            configFile: 'tests/app/config/web.php'
+            configFile: 'tests/app/config/console.php'
             class: '\yii\console\Application'

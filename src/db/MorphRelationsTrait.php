@@ -70,7 +70,7 @@ trait MorphRelationsTrait
 	 * @param array $extraCondition Extra condition for filtering.
 	 * @param string|null $viaTable Name of junction table for many-to-many relation.
 	 * @param string|null $viaLink Name of foreign key to morph table.
-	 * @param callable $viaCallable a PHP callback for customizing the relation associated with the junction table.
+	 * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
 	 *
 	 * @return ActiveQuery the relational query object.
 	 */
@@ -80,7 +80,7 @@ trait MorphRelationsTrait
 		$extraCondition = [],
 		$viaTable = null,
 		$viaLink = null,
-		callable $viaCallable = null
+		$viaCallable = null
 	) {
 		return $this->createMorphRelation($class, $morphName, $extraCondition, $viaTable, $viaLink, $viaCallable, true);
 	}
@@ -93,7 +93,7 @@ trait MorphRelationsTrait
 	 * @param array $extraCondition Extra condition for filtering.
 	 * @param string|null $viaTable Name of junction table for many-to-many relation.
 	 * @param string|null $viaLink Name of foreign key to morph table.
-	 * @param callable $viaCallable a PHP callback for customizing the relation associated with the junction table.
+	 * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
 	 *
 	 * @return ActiveQuery the relational query object.
 	 */
@@ -103,7 +103,7 @@ trait MorphRelationsTrait
 		$extraCondition = [],
 		$viaTable = null,
 		$viaLink = null,
-		callable $viaCallable = null
+		$viaCallable = null
 	) {
 		return $this->createMorphRelation($class, $morphName, $extraCondition, $viaTable, $viaLink, $viaCallable,
 			false);
@@ -117,7 +117,7 @@ trait MorphRelationsTrait
 	 * @param array $extraCondition Extra condition for filtering.
 	 * @param string|null $viaTable Name of junction table for many-to-many relation.
 	 * @param string|null $viaLink Name of foreign key to morph table.
-	 * @param callable $viaCallable a PHP callback for customizing the relation associated with the junction table.
+	 * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
 	 * @param boolean $multiple hasMany() or hasOne().
 	 *
 	 * @return ActiveQuery the relational query object.
@@ -128,7 +128,7 @@ trait MorphRelationsTrait
 		$extraCondition,
 		$viaTable,
 		$viaLink,
-		callable $viaCallable,
+		$viaCallable,
 		$multiple
 	) {
 		$morphName = $this->normalizeMorphFields($morphName);

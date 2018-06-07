@@ -17,13 +17,13 @@ class AllFixture extends DbFixture
 	 * @var array
 	 */
 	public $depends = [
-		UserFixture::class,
-		CompanyFixture::class,
-		CommentFixture::class,
-		TagFixture::class,
-		TaggableFixture::class,
-		AddressFixture::class,
-		MediaFixture::class,
-		MediableFixture::class,
+		'user' => UserFixture::class,
+		'company' => CompanyFixture::class,
+		'comment' => CommentFixture::class,
+		'tag' => TagFixture::class,
+		'taggable' => TaggableFixture::class,
+		'address' => AddressFixture::class,
+		'media' => MediaFixture::class,
+		'mediable' => MediableFixture::class,
 	];
 }
