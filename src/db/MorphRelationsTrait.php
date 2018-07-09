@@ -162,6 +162,13 @@ trait MorphRelationsTrait
 		return $query;
 	}
 
+    /**
+     * Link
+     *
+     * @param $name
+     * @param $model
+     * @param array $extraColumns
+     */
 	public function link($name, $model, $extraColumns = [])
 	{
 		$relation = parent::getRelation($name);
@@ -169,9 +176,16 @@ trait MorphRelationsTrait
 		if ($morph = $relation->getBehavior('morph')) {
 			/* @var $morph ActiveQueryMorphBehavior */
 
+			$isJunction = $extraColumns;
 			$extraColumns[$morph->morphName[0]] = self::class;
-
 			$extraColumns = ArrayHelper::merge($extraColumns, $morph->extraCondition);
+
+            if (!$isJunction) {
+                $model->setAttributes($extraColumns);
+            } else {
+                $extraColumns[$morph->morphName[1]] = $this->id;
+            }
+
 		}
 
 		parent::link($name, $model, $extraColumns);

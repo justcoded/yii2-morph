@@ -41,7 +41,7 @@ class Company extends \yii\db\ActiveRecord
 	 */
 	public function getTags()
 	{
-		return $this->morphMany(Tag::class, 'taggable', [], 'taggable', ['id' => 'tag_id']);
+		return $this->morphMany(Tag::class, 'taggable', [], 'taggable', 'tag_id');
 	}
 
 	/**
@@ -71,7 +71,7 @@ class Company extends \yii\db\ActiveRecord
 	 */
 	public function getThumbnail()
 	{
-		return $this->morphOne(Media::class, 'mediable', ['type' => 'thumbnail'], 'mediable', ['id' => 'media_id']);
+		return $this->morphOne(Media::class, 'mediable', ['attribute' => 'thumbnail'], 'mediable', 'media_id');
 	}
 
 	/**
@@ -81,6 +81,6 @@ class Company extends \yii\db\ActiveRecord
 	 */
 	public function getGallery()
 	{
-		return $this->morphMany(Media::class, 'mediable', ['type' => 'gallery'], 'mediable', ['id' => 'media_id']);
+		return $this->morphMany(Media::class, 'mediable', ['attribute' => 'gallery'], 'mediable', 'media_id');
 	}
 }
