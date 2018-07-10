@@ -11,27 +11,27 @@ use justcoded\yii2\morph\db\MorphRelationsTrait;
  */
 class Tag extends \yii\db\ActiveRecord
 {
-	use MorphRelationsTrait;
+    use MorphRelationsTrait;
 
-	/**
-	 * @inheritdoc
-	 */
-	public function rules()
-	{
-		return [
-			[['name'], 'required'],
-			[['name'], 'string']
-		];
-	}
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['name'], 'required'],
+            [['name'], 'string']
+        ];
+    }
 
-	/**
-	 * Get all of the answers that are assigned this tag.
-	 *
-	 * @return \yii\db\ActiveQuery[]
-	 */
-	public function getTaggable()
-	{
-		return $this->morphToMany('taggable', 'taggable', 'tag_id');
-	}
+    /**
+     * Get all of the answers that are assigned this tag.
+     *
+     * @return \yii\db\ActiveQuery[]
+     */
+    public function getTaggable()
+    {
+        return $this->morphToMany('taggable', 'taggable', 'tag_id');
+    }
 
 }

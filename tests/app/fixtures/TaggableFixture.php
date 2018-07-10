@@ -9,5 +9,5 @@ namespace app\fixtures;
  */
 class TaggableFixture extends ActiveFixture
 {
-	public $tableName = 'taggable';
+    public $tableName = 'taggable';
 }

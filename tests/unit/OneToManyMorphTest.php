@@ -3,11 +3,10 @@
 namespace tests\unit;
 
 use app\fixtures\AllFixture;
-use Faker\Factory;
-use Yii;
-use app\models\User;
-use app\models\Company;
 use app\models\Comment;
+use app\models\Company;
+use app\models\User;
+use Faker\Factory;
 
 /**
  * Class OneToManyMorphTest
@@ -15,64 +14,64 @@ use app\models\Comment;
  */
 class OneToManyMorphTest extends \Codeception\Test\Unit
 {
-	/**
-	 * @var \UnitTester
-	 */
-	protected $tester;
+    /**
+     * @var \UnitTester
+     */
+    protected $tester;
 
     /**
      * @var \Faker\Factory
      */
-	protected $faker;
+    protected $faker;
 
-	/**
-	 * @var array
-	 */
-	private $validUsers;
+    /**
+     * @var array
+     */
+    private $validUsers;
 
     /**
      * @var array
      */
     private $validCompanies;
 
-	/**
-	 * _fixtures
-	 *
-	 * @return array
-	 */
-	public function _fixtures()
-	{
-		$all = new AllFixture();
-		return $all->depends;
-	}
+    /**
+     * _fixtures
+     *
+     * @return array
+     */
+    public function _fixtures()
+    {
+        $all = new AllFixture();
+        return $all->depends;
+    }
 
-	/**
-	 * _before
-	 *
-	 */
-	public function _before()
-	{
-	    $this->faker = Factory::create();
-		$this->validUsers = $this->tester->grabFixture('user')->data;
+    /**
+     * _before
+     *
+     */
+    public function _before()
+    {
+        $this->faker = Factory::create();
+        $this->validUsers = $this->tester->grabFixture('user')->data;
         $this->validCompanies = $this->tester->grabFixture('company')->data;
-	}
+    }
 
     /**
      * Test Get Data
      *
      */
-	public function testGetData()
-	{
-		$user = User::findOne($this->validUsers['user0']['id']);
+    public function testGetData()
+    {
+        $user = User::findOne($this->validUsers['user0']['id']);
 
-		$user->getComments();
-		expect(1)->equals(1);
+        $user->getComments();
+        expect(1)->equals(1);
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
 
         $company->getComments();
         expect(1)->equals(1);
-	}
+    }
 
     /**
      * Test Link
@@ -119,12 +118,12 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
     {
         $user = User::findOne($this->validUsers['user3']['id']);
 
-        $user->unlinkAll('comments',true);
+        $user->unlinkAll('comments', true);
         expect(1)->equals(1);
 
         $company = Company::findOne($this->validCompanies['company3']['id']);
 
-        $company->unlinkAll('comments',true);
+        $company->unlinkAll('comments', true);
         expect(1)->equals(1);
     }
 }

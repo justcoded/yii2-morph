@@ -9,5 +9,5 @@ namespace app\fixtures;
  */
 class UserFixture extends ActiveFixture
 {
-	public $modelClass = '\\app\\models\\User';
+    public $modelClass = '\\app\\models\\User';
 }

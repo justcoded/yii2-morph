@@ -1,17 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 14.05.18
- * Time: 18:56
- */
 
 namespace justcoded\yii2\morph\db;
 
 use yii\base\Behavior;
 
+/**
+ * Class ActiveQueryMorphBehavior
+ * @package justcoded\yii2\morph\db
+ */
 class ActiveQueryMorphBehavior extends Behavior
 {
-	public $morphName;
-	public $extraCondition;
+    public $morphName;
+    public $extraCondition;
 }

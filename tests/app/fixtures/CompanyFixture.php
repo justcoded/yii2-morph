@@ -9,5 +9,5 @@ namespace app\fixtures;
  */
 class CompanyFixture extends ActiveFixture
 {
-	public $modelClass = '\\app\\models\\Company';
+    public $modelClass = '\\app\\models\\Company';
 }

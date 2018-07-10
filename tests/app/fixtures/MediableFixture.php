@@ -9,5 +9,5 @@ namespace app\fixtures;
  */
 class MediableFixture extends ActiveFixture
 {
-	public $tableName = 'mediable';
+    public $tableName = 'mediable';
 }

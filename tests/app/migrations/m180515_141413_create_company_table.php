@@ -7,22 +7,22 @@ use yii\db\Migration;
  */
 class m180515_141413_create_company_table extends Migration
 {
-	/**
-	 * {@inheritdoc}
-	 */
-	public function safeUp()
-	{
-		$this->createTable('company', [
-			'id'    => $this->primaryKey(),
-			'name' => $this->string(),
-		]);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function safeUp()
+    {
+        $this->createTable('company', [
+            'id' => $this->primaryKey(),
+            'name' => $this->string(),
+        ]);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function safeDown()
-	{
-		$this->dropTable('company');
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function safeDown()
+    {
+        $this->dropTable('company');
+    }
 }

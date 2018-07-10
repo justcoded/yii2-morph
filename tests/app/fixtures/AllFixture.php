@@ -11,19 +11,19 @@ use yii\test\DbFixture;
  */
 class AllFixture extends DbFixture
 {
-	/**
-	 * Fixture dependencies
-	 *
-	 * @var array
-	 */
-	public $depends = [
-		'user' => UserFixture::class,
-		'company' => CompanyFixture::class,
-		'comment' => CommentFixture::class,
-		'tag' => TagFixture::class,
-		'taggable' => TaggableFixture::class,
-		'address' => AddressFixture::class,
-		'media' => MediaFixture::class,
-		'mediable' => MediableFixture::class,
-	];
+    /**
+     * Fixture dependencies
+     *
+     * @var array
+     */
+    public $depends = [
+        'user' => UserFixture::class,
+        'company' => CompanyFixture::class,
+        'comment' => CommentFixture::class,
+        'tag' => TagFixture::class,
+        'taggable' => TaggableFixture::class,
+        'address' => AddressFixture::class,
+        'media' => MediaFixture::class,
+        'mediable' => MediableFixture::class,
+    ];
 }

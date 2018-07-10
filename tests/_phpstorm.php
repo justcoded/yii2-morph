@@ -9,8 +9,8 @@ $file = './vendor/phpunit/phpunit/src/Util/Printer.php';
 $content = file_get_contents($file);
 $line_fix = 'if (!$out) $out = \'php://stderr\'; ';
 if (!strpos($content, $line_fix)) {
-	file_put_contents(
-		$file,
-		str_replace('if ($out !== null)', $line_fix . "\n        " . 'if ($out !== null)', $content)
-	);
+    file_put_contents(
+        $file,
+        str_replace('if ($out !== null)', $line_fix . "\n        " . 'if ($out !== null)', $content)
+    );
 }

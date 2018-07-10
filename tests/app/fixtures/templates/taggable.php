@@ -1,8 +1,8 @@
 <?php
 
+use app\models\Company;
 use app\models\Tag;
 use app\models\User;
-use app\models\Company;
 
 /**
  * @var $faker \Faker\Generator
@@ -12,7 +12,7 @@ use app\models\Company;
 $taggable_type = $faker->randomElement([User::class, Company::class]);
 
 return [
-	'tag_id'        => $faker->randomElement(Tag::find()->select('id')->column()),
-	'taggable_id'   => $faker->randomElement($taggable_type::find()->select('id')->column()),
-	'taggable_type' => $taggable_type,
+    'tag_id' => $faker->randomElement(Tag::find()->select('id')->column()),
+    'taggable_id' => $faker->randomElement($taggable_type::find()->select('id')->column()),
+    'taggable_type' => $taggable_type,
 ];

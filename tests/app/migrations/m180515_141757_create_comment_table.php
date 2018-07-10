@@ -7,27 +7,27 @@ use yii\db\Migration;
  */
 class m180515_141757_create_comment_table extends Migration
 {
-	/**
-	 * {@inheritdoc}
-	 */
-	public function safeUp()
-	{
-		$this->createTable('comment', [
-			'id'               => $this->primaryKey(),
-			'commentable_id'   => $this->integer(),
-			'commentable_type' => $this->string(),
-			'body'             => $this->text(),
-		]);
+    /**
+     * {@inheritdoc}
+     */
+    public function safeUp()
+    {
+        $this->createTable('comment', [
+            'id' => $this->primaryKey(),
+            'commentable_id' => $this->integer(),
+            'commentable_type' => $this->string(),
+            'body' => $this->text(),
+        ]);
 
-		$this->createIndex('idx_commentable_id', 'comment', 'commentable_id');
-		$this->createIndex('idx_commentable_type', 'comment', 'commentable_type');
-	}
+        $this->createIndex('idx_commentable_id', 'comment', 'commentable_id');
+        $this->createIndex('idx_commentable_type', 'comment', 'commentable_type');
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function safeDown()
-	{
-		$this->dropTable('comment');
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function safeDown()
+    {
+        $this->dropTable('comment');
+    }
 }

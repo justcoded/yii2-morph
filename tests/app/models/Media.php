@@ -11,19 +11,19 @@ use justcoded\yii2\morph\db\MorphRelationsTrait;
  */
 class Media extends \yii\db\ActiveRecord
 {
-	use MorphRelationsTrait;
-	
-	/**
-	 * @inheritdoc
-	 */
-	public function rules()
-	{
-		return [
-			[['type', 'file', 'thumb'], 'required'],
-			[['type', 'file', 'thumb'], 'string'],
-			[['type'], 'in', 'range' => ['image', 'video', 'file']],
-		];
-	}
+    use MorphRelationsTrait;
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['type', 'file', 'thumb'], 'required'],
+            [['type', 'file', 'thumb'], 'string'],
+            [['type'], 'in', 'range' => ['image', 'video', 'file']],
+        ];
+    }
 
 
 }

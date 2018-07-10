@@ -9,5 +9,5 @@ namespace app\fixtures;
  */
 class TagFixture extends ActiveFixture
 {
-	public $modelClass = '\\app\\models\\Tag';
+    public $modelClass = '\\app\\models\\Tag';
 }

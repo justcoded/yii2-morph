@@ -9,5 +9,5 @@ namespace app\fixtures;
  */
 class MediaFixture extends ActiveFixture
 {
-	public $modelClass = '\\app\\models\\Media';
+    public $modelClass = '\\app\\models\\Media';
 }

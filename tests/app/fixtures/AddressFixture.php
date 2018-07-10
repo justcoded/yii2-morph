@@ -9,5 +9,5 @@ namespace app\fixtures;
  */
 class AddressFixture extends ActiveFixture
 {
-	public $tableName = 'address';
+    public $tableName = 'address';
 }

@@ -5,6 +5,6 @@
  */
 
 return [
-	'id'    => $index + 1,
-	'name'  => $faker->company,
+    'id' => $index + 1,
+    'name' => $faker->company,
 ];

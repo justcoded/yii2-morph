@@ -8,159 +8,179 @@ use yii\helpers\ArrayHelper;
 
 trait MorphRelationsTrait
 {
-	/*
-	 * $relation[0] -> type
-	 * $relation[1] -> id
-	 */
+    /*
+     * $relation[0] -> type
+     * $relation[1] -> id
+     */
 
-	/**
-	 * [MO] Set one-to-one relation from morph object to object.
-	 *ы
-	 * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
-	 *
-	 * @return ActiveQuery the relational query object.
-	 */
-	public function morphToOne($morphName)
-	{
-		$morphName = $this->normalizeMorphFields($morphName);
+    /**
+     * [MO] Set one-to-one relation from morph object to object.
+     *ы
+     * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
+     *
+     * @return ActiveQuery the relational query object.
+     */
+    public function morphToOne($morphName)
+    {
+        $morphName = $this->normalizeMorphFields($morphName);
         $class = self::class;
 
-		return $this->hasOne($class, ['id' => $morphName[1]])->onCondition([$morphName[0] => $class]);
-	}
+        return $this->hasOne($class, ['id' => $morphName[1]])->onCondition([$morphName[0] => $class]);
+    }
 
-	/**
-	 * [MO] Get list of relations.
-	 *
-	 * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
-	 * @param string|null $viaTable Name of junction table for many-to-many relation.
-	 * @param string|null $viaLink Name of foreign key to morph table.
-	 * @param array $extraCondition Extra condition for filtering.
-	 *
-	 * @return \yii\db\ActiveQuery[] of ActiveQuery elements like ['entity1'=>hasMany(),'entity2'=>hasMany()].
-	 */
-	public function morphToMany($morphName, $viaTable, $viaLink, $extraCondition = [])
-	{
-		$morphName = $this->normalizeMorphFields($morphName);
+    /**
+     * Normalize relation.
+     * If $relation is string, converts that to array like ['able_type','able_id']
+     *
+     * @param string|array $morphName
+     *
+     * @return array
+     */
+    private function normalizeMorphFields($morphName)
+    {
+        if (is_string($morphName)) {
+            $morphName = [
+                $morphName . '_type',
+                $morphName . '_id'
+            ];
+        }
 
-		$query = new Query();
+        return $morphName;
+    }
 
-		$types = $query->select($morphName[0])
-			->from($viaTable)
-			->where([$viaLink => $this->id])
-			->groupBy($morphName[0])
-			->all();
+    /**
+     * [MO] Get list of relations.
+     *
+     * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
+     * @param string|null $viaTable Name of junction table for many-to-many relation.
+     * @param string|null $viaLink Name of foreign key to morph table.
+     * @param array $extraCondition Extra condition for filtering.
+     *
+     * @return \yii\db\ActiveQuery[] of ActiveQuery elements like ['entity1'=>hasMany(),'entity2'=>hasMany()].
+     */
+    public function morphToMany($morphName, $viaTable, $viaLink, $extraCondition = [])
+    {
+        $morphName = $this->normalizeMorphFields($morphName);
 
-		return ArrayHelper::map($types, $morphName[0],
-			function ($model) use ($viaTable, $viaLink, $morphName, $extraCondition) {
-				$class = $model[$morphName[0]];
+        $query = new Query();
 
-				return $this->hasMany($class, ['id' => $morphName[1]])
-					->viaTable($viaTable, [$viaLink => 'id'],
-						function ($query) use ($morphName, $class, $extraCondition) {
-							$query->onCondition(ArrayHelper::merge([$morphName[0] => $class], $extraCondition));
-						});
-			});
-	}
+        $types = $query->select($morphName[0])
+            ->from($viaTable)
+            ->where([$viaLink => $this->id])
+            ->groupBy($morphName[0])
+            ->all();
 
-	/**
-	 * [OM] Set one-to-one relation from object to morph object.
-	 *
-	 * @param ActiveRecord|string $class Class name of model for make relation.
-	 * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
-	 * @param array $extraCondition Extra condition for filtering.
-	 * @param string|null $viaTable Name of junction table for many-to-many relation.
-	 * @param string|null $viaLink Name of foreign key to morph table.
-	 * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
-	 *
-	 * @return ActiveQuery the relational query object.
-	 */
-	public function morphOne(
-		$class,
-		$morphName,
-		$extraCondition = [],
-		$viaTable = null,
-		$viaLink = null,
-		$viaCallable = null
-	) {
-		return $this->createMorphRelation($class, $morphName, $extraCondition, $viaTable, $viaLink, $viaCallable, true);
-	}
+        return ArrayHelper::map($types, $morphName[0],
+            function ($model) use ($viaTable, $viaLink, $morphName, $extraCondition) {
+                $class = $model[$morphName[0]];
 
-	/**
-	 * [OM] Set one-to-many relation from object to morph object.
-	 *
-	 * @param ActiveRecord|string $class Class name of model for make relation.
-	 * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
-	 * @param array $extraCondition Extra condition for filtering.
-	 * @param string|null $viaTable Name of junction table for many-to-many relation.
-	 * @param string|null $viaLink Name of foreign key to morph table.
-	 * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
-	 *
-	 * @return ActiveQuery the relational query object.
-	 */
-	public function morphMany(
-		$class,
-		$morphName,
-		$extraCondition = [],
-		$viaTable = null,
-		$viaLink = null,
-		$viaCallable = null
-	) {
-		return $this->createMorphRelation($class, $morphName, $extraCondition, $viaTable, $viaLink, $viaCallable,
-			false);
-	}
+                return $this->hasMany($class, ['id' => $morphName[1]])
+                    ->viaTable($viaTable, [$viaLink => 'id'],
+                        function ($query) use ($morphName, $class, $extraCondition) {
+                            $query->onCondition(ArrayHelper::merge([$morphName[0] => $class], $extraCondition));
+                        });
+            });
+    }
 
-	/**
-	 * [OM] Set relation from object to morph object.
-	 *
-	 * @param ActiveRecord|string $class Class name of model for make relation.
-	 * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
-	 * @param array $extraCondition Extra condition for filtering.
-	 * @param string|null $viaTable Name of junction table for many-to-many relation.
-	 * @param string|null $viaLink Name of foreign key to morph table.
-	 * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
-	 * @param boolean $multiple hasMany() or hasOne().
-	 *
-	 * @return ActiveQuery the relational query object.
-	 */
-	private function createMorphRelation(
-		$class,
-		$morphName,
-		$extraCondition,
-		$viaTable,
-		$viaLink,
-		$viaCallable,
-		$multiple
-	) {
-		$morphName = $this->normalizeMorphFields($morphName);
+    /**
+     * [OM] Set one-to-one relation from object to morph object.
+     *
+     * @param ActiveRecord|string $class Class name of model for make relation.
+     * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
+     * @param array $extraCondition Extra condition for filtering.
+     * @param string|null $viaTable Name of junction table for many-to-many relation.
+     * @param string|null $viaLink Name of foreign key to morph table.
+     * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
+     *
+     * @return ActiveQuery the relational query object.
+     */
+    public function morphOne(
+        $class,
+        $morphName,
+        $extraCondition = [],
+        $viaTable = null,
+        $viaLink = null,
+        $viaCallable = null
+    ) {
+        return $this->createMorphRelation($class, $morphName, $extraCondition, $viaTable, $viaLink, $viaCallable, true);
+    }
 
-		$query = null;
+    /**
+     * [OM] Set relation from object to morph object.
+     *
+     * @param ActiveRecord|string $class Class name of model for make relation.
+     * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
+     * @param array $extraCondition Extra condition for filtering.
+     * @param string|null $viaTable Name of junction table for many-to-many relation.
+     * @param string|null $viaLink Name of foreign key to morph table.
+     * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
+     * @param boolean $multiple hasMany() or hasOne().
+     *
+     * @return ActiveQuery the relational query object.
+     */
+    private function createMorphRelation(
+        $class,
+        $morphName,
+        $extraCondition,
+        $viaTable,
+        $viaLink,
+        $viaCallable,
+        $multiple
+    ) {
+        $morphName = $this->normalizeMorphFields($morphName);
 
-		if ($viaTable !== null) {
-			$query = $multiple ? $this->hasMany($class, ['id' => $viaLink]) : $this->hasOne($class, ['id' => $viaLink]);
-			$query = $query->viaTable($viaTable, [$morphName[1] => 'id'],
-				$viaCallable ?? function ($query) use ($morphName, $class, $extraCondition, $viaCallable) {
-					$query->onCondition(ArrayHelper::merge([
-						$morphName[0] => self::class,
-					], $extraCondition));
+        $query = null;
 
-					if ($viaCallable !== null) {
-						call_user_func($viaCallable, $query);
-					}
-				});
-		} else {
-			$query = $multiple ? $this->hasMany($class, [$morphName[1] => 'id']) : $this->hasOne($class,
-				[$morphName[1] => 'id']);
-			$query = $query->where([$morphName[0] => self::class])->andWhere($extraCondition);
-		}
+        if ($viaTable !== null) {
+            $query = $multiple ? $this->hasMany($class, ['id' => $viaLink]) : $this->hasOne($class, ['id' => $viaLink]);
+            $query = $query->viaTable($viaTable, [$morphName[1] => 'id'],
+                $viaCallable ?? function ($query) use ($morphName, $class, $extraCondition, $viaCallable) {
+                    $query->onCondition(ArrayHelper::merge([
+                        $morphName[0] => self::class,
+                    ], $extraCondition));
 
-		$query->attachBehavior('morph', [
-			'class' => ActiveQueryMorphBehavior::class,
-			'morphName' => $morphName,
-			'extraCondition' => $extraCondition
-		]);
+                    if ($viaCallable !== null) {
+                        call_user_func($viaCallable, $query);
+                    }
+                });
+        } else {
+            $query = $multiple ? $this->hasMany($class, [$morphName[1] => 'id']) : $this->hasOne($class,
+                [$morphName[1] => 'id']);
+            $query = $query->where([$morphName[0] => self::class])->andWhere($extraCondition);
+        }
 
-		return $query;
-	}
+        $query->attachBehavior('morph', [
+            'class' => ActiveQueryMorphBehavior::class,
+            'morphName' => $morphName,
+            'extraCondition' => $extraCondition
+        ]);
+
+        return $query;
+    }
+
+    /**
+     * [OM] Set one-to-many relation from object to morph object.
+     *
+     * @param ActiveRecord|string $class Class name of model for make relation.
+     * @param string|array $morphName Array like ['able_type','able_id'] or string 'able'.
+     * @param array $extraCondition Extra condition for filtering.
+     * @param string|null $viaTable Name of junction table for many-to-many relation.
+     * @param string|null $viaLink Name of foreign key to morph table.
+     * @param callable|null $viaCallable a PHP callback for customizing the relation associated with the junction table.
+     *
+     * @return ActiveQuery the relational query object.
+     */
+    public function morphMany(
+        $class,
+        $morphName,
+        $extraCondition = [],
+        $viaTable = null,
+        $viaLink = null,
+        $viaCallable = null
+    ) {
+        return $this->createMorphRelation($class, $morphName, $extraCondition, $viaTable, $viaLink, $viaCallable,
+            false);
+    }
 
     /**
      * Link
@@ -169,16 +189,16 @@ trait MorphRelationsTrait
      * @param $model
      * @param array $extraColumns
      */
-	public function link($name, $model, $extraColumns = [])
-	{
-		$relation = parent::getRelation($name);
+    public function link($name, $model, $extraColumns = [])
+    {
+        $relation = parent::getRelation($name);
 
-		if ($morph = $relation->getBehavior('morph')) {
-			/* @var $morph ActiveQueryMorphBehavior */
+        if ($morph = $relation->getBehavior('morph')) {
+            /* @var $morph ActiveQueryMorphBehavior */
 
-			$isJunction = $extraColumns;
-			$extraColumns[$morph->morphName[0]] = self::class;
-			$extraColumns = ArrayHelper::merge($extraColumns, $morph->extraCondition);
+            $isJunction = $extraColumns;
+            $extraColumns[$morph->morphName[0]] = self::class;
+            $extraColumns = ArrayHelper::merge($extraColumns, $morph->extraCondition);
 
             if (!$isJunction) {
                 $model->setAttributes($extraColumns);
@@ -186,28 +206,8 @@ trait MorphRelationsTrait
                 $extraColumns[$morph->morphName[1]] = $this->id;
             }
 
-		}
+        }
 
-		parent::link($name, $model, $extraColumns);
-	}
-
-	/**
-	 * Normalize relation.
-	 * If $relation is string, converts that to array like ['able_type','able_id']
-	 *
-	 * @param string|array $morphName
-	 *
-	 * @return array
-	 */
-	private function normalizeMorphFields($morphName)
-	{
-		if (is_string($morphName)) {
-			$morphName = [
-				$morphName . '_type',
-				$morphName . '_id'
-			];
-		}
-
-		return $morphName;
-	}
+        parent::link($name, $model, $extraColumns);
+    }
 }

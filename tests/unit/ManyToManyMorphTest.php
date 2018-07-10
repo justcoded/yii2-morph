@@ -4,12 +4,11 @@ namespace tests\unit;
 
 use app\fixtures\AllFixture;
 use app\models\Address;
-use app\models\Tag;
-use Yii;
-use Faker\Factory;
-use app\models\User;
 use app\models\Company;
 use app\models\Media;
+use app\models\Tag;
+use app\models\User;
+use Faker\Factory;
 
 /**
  * Class ManyToManyMorphTest
@@ -189,36 +188,36 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
     {
         $user = User::findOne($this->validUsers['user4']['id']);
 
-        $user->unlinkAll('gallery',true);
+        $user->unlinkAll('gallery', true);
         expect(1)->equals(1);
 
-        $user->unlinkAll('tags',true);
+        $user->unlinkAll('tags', true);
         expect(1)->equals(1);
 
-        $user->unlinkAll('thumbnail',true);
+        $user->unlinkAll('thumbnail', true);
         expect(1)->equals(1);
 
-        $user->unlinkAll('billingAddresses',true);
+        $user->unlinkAll('billingAddresses', true);
         expect(1)->equals(1);
 
-        $user->unlinkAll('shippingAddresses',true);
+        $user->unlinkAll('shippingAddresses', true);
         expect(1)->equals(1);
 
         $company = Company::findOne($this->validCompanies['company4']['id']);
 
-        $company->unlinkAll('gallery',true);
+        $company->unlinkAll('gallery', true);
         expect(1)->equals(1);
 
-        $company->unlinkAll('tags',true);
+        $company->unlinkAll('tags', true);
         expect(1)->equals(1);
 
-        $company->unlinkAll('thumbnail',true);
+        $company->unlinkAll('thumbnail', true);
         expect(1)->equals(1);
 
-        $company->unlinkAll('billingAddresses',true);
+        $company->unlinkAll('billingAddresses', true);
         expect(1)->equals(1);
 
-        $company->unlinkAll('shippingAddresses',true);
+        $company->unlinkAll('shippingAddresses', true);
         expect(1)->equals(1);
     }
 }
