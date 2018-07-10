@@ -64,12 +64,12 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
     {
         $user = User::findOne($this->validUsers['user0']['id']);
 
-        $user->getComments();
+        $user->getComments()->all();
         expect(1)->equals(1);
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
 
-        $company->getComments();
+        $company->getComments()->all();
         expect(1)->equals(1);
     }
 
@@ -80,11 +80,26 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
     public function testLink()
     {
         $user = User::findOne($this->validUsers['user0']['id']);
+        $count = $user->getComments()->count();
         $comment = new Comment();
-        $comment->commentable_id = $user->id;
         $comment->body = $this->faker->text;
-        $user->link('comments', $comment);
-        expect(1)->equals(1);
+        $this->assertNull($user->link('comments', $comment));
+        $this->tester->seeInDatabase('comment', [
+            'commentable_id' => $user->id,
+            'commentable_type' => User::class,
+        ]);
+        $this->assertEquals($count + 1, $user->getComments()->count());
+
+        $company = Company::findOne($this->validCompanies['company0']['id']);
+        $count = $company->getComments()->count();
+        $comment = new Comment();
+        $comment->body = $this->faker->text;
+        $this->assertNull($company->link('comments', $comment));
+        $this->tester->seeInDatabase('comment', [
+            'commentable_id' => $company->id,
+            'commentable_type' => Company::class,
+        ]);
+        $this->assertEquals($count + 1, $company->getComments()->count());
     }
 
     /**
@@ -95,16 +110,24 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
     {
         foreach ($this->validUsers as $item) {
             if (($user = User::findOne($item['id'])) && ($comment = $user->getComments()->one())) {
-                $user->unlink('comments', $comment, true);
-                expect(1)->equals(1);
+                $count = $user->getComments()->count();
+                $this->assertNull($user->unlink('comments', $comment, true));
+                $this->tester->dontSeeInDatabase('comment', [
+                    'id' => $comment->id
+                ]);
+                $this->assertEquals($count ? $count - 1 : $count, $user->getComments()->count());
                 break;
             }
         }
 
         foreach ($this->validCompanies as $item) {
-            if (($company = Company::findOne($item['id'])) && ($comment = $user->getComments()->one())) {
-                $company->unlink('comments', $comment, true);
-                expect(1)->equals(1);
+            if (($company = Company::findOne($item['id'])) && ($comment = $company->getComments()->one())) {
+                $count = $company->getComments()->count();
+                $this->assertNull($company->unlink('comments', $comment, true));
+                $this->tester->dontSeeInDatabase('comment', [
+                    'id' => $comment->id
+                ]);
+                $this->assertEquals($count ? $count - 1 : $count, $company->getComments()->count());
                 break;
             }
         }
@@ -118,12 +141,20 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
     {
         $user = User::findOne($this->validUsers['user3']['id']);
 
-        $user->unlinkAll('comments', true);
-        expect(1)->equals(1);
+        $this->assertNull($user->unlinkAll('comments', true));
+        $this->tester->dontSeeInDatabase('comment', [
+            'commentable_id' => $user->id,
+            'commentable_type' => User::class,
+        ]);
+        $this->assertEquals(0, $user->getComments()->count());
 
         $company = Company::findOne($this->validCompanies['company3']['id']);
 
-        $company->unlinkAll('comments', true);
-        expect(1)->equals(1);
+        $this->assertNull($this->assertNull($company->unlinkAll('comments', true)));
+        $this->tester->dontSeeInDatabase('comment', [
+            'commentable_id' => $company->id,
+            'commentable_type' => Company::class,
+        ]);
+        $this->assertEquals(0, $company->getComments()->count());
     }
 }

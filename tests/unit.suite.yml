@@ -5,6 +5,8 @@
 class_name: UnitTester
 modules:
     enabled:
+        - Asserts
+        - Db
         - Yii2:
             part: [orm, fixtures]
     config:

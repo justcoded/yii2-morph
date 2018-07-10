@@ -96,7 +96,7 @@ Models and relations in tests:
 	--------
 	
 	User
-			1:n(:type) 	Address   (via junction)
+			1:n(:type) 	Address
 	Company   
 	
 	--------
