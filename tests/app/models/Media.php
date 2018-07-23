@@ -13,6 +13,9 @@ class Media extends \yii\db\ActiveRecord
 {
     use MorphRelationsTrait;
 
+    const TYPE_THUMBNAIL = 'thumbnail';
+    const TYPE_GALLERY = 'gallery';
+
     /**
      * @inheritdoc
      */

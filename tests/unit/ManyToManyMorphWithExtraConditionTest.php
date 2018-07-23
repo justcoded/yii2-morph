@@ -64,19 +64,61 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
     {
         $user = User::findOne($this->validUsers['user0']['id']);
 
-        $user->getThumbnail()->all();
-        expect(1)->equals(1);
+        $userMediaThumbnails = Media::find()
+            ->leftJoin('mediable', 'mediable.media_id = media.id')
+            ->andWhere(
+                [
+                    'mediable_id' => $user->id,
+                    'mediable_type' => User::class,
+                    'mediable.type' => Media::TYPE_THUMBNAIL
+                ]
+            )
+            ->all();
+        $userMediaThumbnailsTest = $user->getThumbnail()->all();
+        $this->assertEquals($userMediaThumbnails, $userMediaThumbnailsTest);
 
-        $user->getGallery()->all();
-        expect(1)->equals(1);
+        $userMediaGallery = Media::find()
+            ->leftJoin('mediable', 'mediable.media_id = media.id')
+            ->andWhere(
+                [
+                    'mediable_id' => $user->id,
+                    'mediable_type' => User::class,
+                    'mediable.type' => Media::TYPE_GALLERY
+                ]
+            )
+            ->all();
+        $userMediaGalleryTest = $user->getGallery()->all();
+        $this->assertEquals($userMediaGallery, $userMediaGalleryTest);
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
 
-        $company->getThumbnail()->all();
-        expect(1)->equals(1);
+        $companyMediaThumbnails = Media::find()
+            ->leftJoin('mediable', 'mediable.media_id = media.id')
+            ->andWhere(
+                [
+                    'mediable_id' => $company->id,
+                    'mediable_type' => Company::class,
+                    'mediable.type' => Media::TYPE_THUMBNAIL
+                ]
+            )
+            ->all();
+        $companyMediaThumbnailsTest = $company->getThumbnail()->all();
+        $this->assertEquals($companyMediaThumbnails, $companyMediaThumbnailsTest);
 
-        $company->getGallery()->all();
-        expect(1)->equals(1);
+        $company = Company::findOne($this->validCompanies['company0']['id']);
+
+        $companyMediaGallery = Media::find()
+            ->leftJoin('mediable', 'mediable.media_id = media.id')
+            ->andWhere(
+                [
+                    'mediable_id' => $company->id,
+                    'mediable_type' => Company::class,
+                    'mediable.type' => Media::TYPE_GALLERY
+                ]
+            )
+            ->all();
+        $companyMediaGalleryTest = $company->getThumbnail()->all();
+        $this->assertEquals($companyMediaGallery, $companyMediaGalleryTest);
     }
 
     /**

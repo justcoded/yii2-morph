@@ -71,7 +71,7 @@ class Company extends \yii\db\ActiveRecord
      */
     public function getThumbnail()
     {
-        return $this->morphOne(Media::class, 'mediable', ['type' => 'thumbnail'], 'mediable', 'media_id');
+        return $this->morphOne(Media::class, 'mediable', ['type' => Media::TYPE_THUMBNAIL], 'mediable', 'media_id');
     }
 
     /**
@@ -81,6 +81,6 @@ class Company extends \yii\db\ActiveRecord
      */
     public function getGallery()
     {
-        return $this->morphMany(Media::class, 'mediable', ['type' => 'gallery'], 'mediable', 'media_id');
+        return $this->morphMany(Media::class, 'mediable', ['type' => Media::TYPE_GALLERY], 'mediable', 'media_id');
     }
 }

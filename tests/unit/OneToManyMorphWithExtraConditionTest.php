@@ -63,15 +63,31 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
     public function testGetData()
     {
         $user = User::findOne($this->validUsers['user0']['id']);
-
-        $user->getBillingAddresses()->all();
-        expect(1)->equals(1);
+        $userBillingAddresses = Address::find()
+            ->andWhere(
+                [
+                    'addressable_id' => $user->id,
+                    'addressable_type' => User::class,
+                    'type' => Address::TYPE_BILLING
+                ]
+            )
+            ->all();
+        $userBillingAddressesTest = $user->getBillingAddresses()->all();
+        $this->assertEquals($userBillingAddresses, $userBillingAddressesTest);
 
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
-
-        $company->getShippingAddresses();
-        expect(1)->equals(1);
+        $companyShippingAddresses = Address::find()
+            ->andWhere(
+                [
+                    'addressable_id' => $company->id,
+                    'addressable_type' => Company::class,
+                    'type' => Address::TYPE_SHIPPING
+                ]
+            )
+            ->all();
+        $companyShippingAddressesTest = $company->getShippingAddresses()->all();
+        $this->assertEquals($companyShippingAddresses, $companyShippingAddressesTest);
     }
 
     /**

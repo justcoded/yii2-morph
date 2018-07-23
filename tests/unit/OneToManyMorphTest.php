@@ -3,10 +3,15 @@
 namespace tests\unit;
 
 use app\fixtures\AllFixture;
+use app\fixtures\CommentFixture;
+use app\fixtures\UserFixture;
+use app\fixtures\CompanyFixture;
 use app\models\Comment;
 use app\models\Company;
+use app\models\Media;
 use app\models\User;
 use Faker\Factory;
+use yii\collection\Collection;
 
 /**
  * Class OneToManyMorphTest
@@ -41,8 +46,18 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
      */
     public function _fixtures()
     {
-        $all = new AllFixture();
-        return $all->depends;
+        return [
+            'user' => UserFixture::class,
+            'company' => CompanyFixture::class,
+            'comment' => CommentFixture::class
+        ];
+    }
+
+    public function _after()
+    {
+//        User::deleteAll();
+//        Company::deleteAll();
+//        Comment::deleteAll();
     }
 
     /**
@@ -63,14 +78,18 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
     public function testGetData()
     {
         $user = User::findOne($this->validUsers['user0']['id']);
-
-        $user->getComments()->all();
-        expect(1)->equals(1);
+        $userComments = Comment::find()
+            ->andWhere(['commentable_id' => $user->id, 'commentable_type' => User::class])
+            ->all();
+        $userCommentsTest = $user->getComments()->all();
+        $this->assertEquals($userComments, $userCommentsTest);
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
-
-        $company->getComments()->all();
-        expect(1)->equals(1);
+        $companyComments = Comment::find()
+            ->andWhere(['commentable_id' => $company->id, 'commentable_type' => Company::class])
+            ->all();
+        $companyCommentsTest = $company->getComments()->all();
+        $this->assertEquals($companyComments, $companyCommentsTest);
     }
 
     /**

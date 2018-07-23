@@ -65,14 +65,30 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
     public function testGetData()
     {
         $user = User::findOne($this->validUsers['user0']['id']);
-
-        $user->getTags()->all();
-        expect(1)->equals(1);
+        $userTags = Tag::find()
+            ->leftJoin('taggable', 'taggable.tag_id = tag.id')
+            ->andWhere(
+                [
+                    'taggable_id' => $user->id,
+                    'taggable_type' => User::class,
+                ]
+            )
+            ->all();
+        $userTagsTest = $user->getTags()->all();
+        $this->assertEquals($userTags, $userTagsTest);
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
-
-        $company->getTags()->all();
-        expect(1)->equals(1);
+        $companyTags = Tag::find()
+            ->leftJoin('taggable', 'taggable.tag_id = tag.id')
+            ->andWhere(
+                [
+                    'taggable_id' => $company->id,
+                    'taggable_type' => Company::class,
+                ]
+            )
+            ->all();
+        $companyTagsTest = $company->getTags()->all();
+        $this->assertEquals($companyTags, $companyTagsTest);
     }
 
     /**
