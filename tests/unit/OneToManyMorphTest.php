@@ -53,13 +53,6 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
         ];
     }
 
-    public function _after()
-    {
-//        User::deleteAll();
-//        Company::deleteAll();
-//        Comment::deleteAll();
-    }
-
     /**
      * _before
      *
