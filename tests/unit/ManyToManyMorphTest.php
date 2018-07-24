@@ -2,10 +2,11 @@
 
 namespace tests\unit;
 
-use app\fixtures\AllFixture;
-use app\models\Address;
+use app\fixtures\CompanyFixture;
+use app\fixtures\UserFixture;
+use app\fixtures\TagFixture;
+use app\fixtures\TaggableFixture;
 use app\models\Company;
-use app\models\Media;
 use app\models\Tag;
 use app\models\User;
 use Faker\Factory;
@@ -43,8 +44,12 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
      */
     public function _fixtures()
     {
-        $all = new AllFixture();
-        return $all->depends;
+        return [
+            'user' => UserFixture::class,
+            'company' => CompanyFixture::class,
+            'tag' => TagFixture::class,
+            'taggable' => TaggableFixture::class
+        ];
     }
 
     /**

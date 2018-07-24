@@ -2,7 +2,9 @@
 
 namespace tests\unit;
 
-use app\fixtures\AllFixture;
+use app\fixtures\AddressFixture;
+use app\fixtures\CompanyFixture;
+use app\fixtures\UserFixture;
 use app\models\Address;
 use app\models\Company;
 use app\models\User;
@@ -41,8 +43,11 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      */
     public function _fixtures()
     {
-        $all = new AllFixture();
-        return $all->depends;
+        return [
+            'user' => UserFixture::class,
+            'company' => CompanyFixture::class,
+            'address' => AddressFixture::class,
+        ];
     }
 
     /**

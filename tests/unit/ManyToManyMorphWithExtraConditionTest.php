@@ -2,7 +2,10 @@
 
 namespace tests\unit;
 
-use app\fixtures\AllFixture;
+use app\fixtures\CompanyFixture;
+use app\fixtures\UserFixture;
+use app\fixtures\MediableFixture;
+use app\fixtures\MediaFixture;
 use app\models\Company;
 use app\models\Media;
 use app\models\User;
@@ -41,8 +44,12 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      */
     public function _fixtures()
     {
-        $all = new AllFixture();
-        return $all->depends;
+        return [
+            'user' => UserFixture::class,
+            'company' => CompanyFixture::class,
+            'media' => MediaFixture::class,
+            'mediable' => MediableFixture::class
+        ];
     }
 
     /**

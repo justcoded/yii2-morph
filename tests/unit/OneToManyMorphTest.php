@@ -2,16 +2,13 @@
 
 namespace tests\unit;
 
-use app\fixtures\AllFixture;
 use app\fixtures\CommentFixture;
 use app\fixtures\UserFixture;
 use app\fixtures\CompanyFixture;
 use app\models\Comment;
 use app\models\Company;
-use app\models\Media;
 use app\models\User;
 use Faker\Factory;
-use yii\collection\Collection;
 
 /**
  * Class OneToManyMorphTest
