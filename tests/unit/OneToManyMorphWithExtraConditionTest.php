@@ -108,11 +108,13 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
         $address->city = $this->faker->city;
         $address->street = $this->faker->streetAddress;
         $this->assertNull($user->link('shippingAddresses', $address));
-        $this->tester->seeInDatabase('address', [
-            'addressable_id' => $user->id,
-            'addressable_type' => User::class,
-            'type' => 'shipping'
-        ]);
+        $this->tester->seeInDatabase(
+            'address', [
+                'addressable_id' => $user->id,
+                'addressable_type' => User::class,
+                'type' => 'shipping'
+            ]
+        );
         $this->assertEquals($count + 1, $user->getShippingAddresses()->count());
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
@@ -122,11 +124,13 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
         $address->city = $this->faker->city;
         $address->street = $this->faker->streetAddress;
         $this->assertNull($company->link('billingAddresses', $address));
-        $this->tester->seeInDatabase('address', [
-            'addressable_id' => $company->id,
-            'addressable_type' => Company::class,
-            'type' => 'billing'
-        ]);
+        $this->tester->seeInDatabase(
+            'address', [
+                'addressable_id' => $company->id,
+                'addressable_type' => Company::class,
+                'type' => 'billing'
+            ]
+        );
         $this->assertEquals($count + 1, $company->getBillingAddresses()->count());
     }
 
@@ -140,9 +144,11 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
             if (($user = User::findOne($item['id'])) && ($address = $user->getShippingAddresses()->one())) {
                 $count = $user->getShippingAddresses()->count();
                 $this->assertNull($user->unlink('shippingAddresses', $address, true));
-                $this->tester->dontSeeInDatabase('address', [
+                $this->tester->dontSeeInDatabase(
+                    'address', [
                     'id' => $address->id
-                ]);
+                    ]
+                );
                 $this->assertEquals($count ? $count - 1 : $count, $user->getShippingAddresses()->count());
                 break;
             }
@@ -152,9 +158,11 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
             if (($company = Company::findOne($item['id'])) && ($address = $company->getBillingAddresses()->one())) {
                 $count = $company->getBillingAddresses()->count();
                 $this->assertNull($company->unlink('billingAddresses', $address, true));
-                $this->tester->dontSeeInDatabase('address', [
-                    'id' => $address->id
-                ]);
+                $this->tester->dontSeeInDatabase(
+                    'address', [
+                        'id' => $address->id
+                    ]
+                );
                 $this->assertEquals($count ? $count - 1 : $count, $company->getBillingAddresses()->count());
                 break;
             }
@@ -169,36 +177,44 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
     {
         $user = User::findOne($this->validUsers['user4']['id']);
         $this->assertNull($user->unlinkAll('billingAddresses', true));
-        $this->tester->dontSeeInDatabase('address', [
-            'addressable_id' => $user->id,
-            'addressable_type' => User::class,
-            'type' => 'billing'
-        ]);
+        $this->tester->dontSeeInDatabase(
+            'address', [
+                'addressable_id' => $user->id,
+                'addressable_type' => User::class,
+                'type' => 'billing'
+            ]
+        );
         $this->assertEquals(0, $user->getBillingAddresses()->count());
 
         $this->assertNull($user->unlinkAll('shippingAddresses', true));
-        $this->tester->dontSeeInDatabase('address', [
-            'addressable_id' => $user->id,
-            'addressable_type' => User::class,
-            'type' => 'shipping'
-        ]);
+        $this->tester->dontSeeInDatabase(
+            'address', [
+                'addressable_id' => $user->id,
+                'addressable_type' => User::class,
+                'type' => 'shipping'
+            ]
+        );
         $this->assertEquals(0, $user->getShippingAddresses()->count());
 
         $company = Company::findOne($this->validCompanies['company4']['id']);
         $this->assertNull($company->unlinkAll('billingAddresses', true));
-        $this->tester->dontSeeInDatabase('address', [
-            'addressable_id' => $company->id,
-            'addressable_type' => Company::class,
-            'type' => 'billing'
-        ]);
+        $this->tester->dontSeeInDatabase(
+            'address', [
+                'addressable_id' => $company->id,
+                'addressable_type' => Company::class,
+                'type' => 'billing'
+            ]
+        );
         $this->assertEquals(0, $user->getBillingAddresses()->count());
 
         $this->assertNull($company->unlinkAll('shippingAddresses', true));
-        $this->tester->dontSeeInDatabase('address', [
-            'addressable_id' => $company->id,
-            'addressable_type' => Company::class,
-            'type' => 'shipping'
-        ]);
+        $this->tester->dontSeeInDatabase(
+            'address', [
+                'addressable_id' => $company->id,
+                'addressable_type' => Company::class,
+                'type' => 'shipping'
+            ]
+        );
         $this->assertEquals(0, $user->getShippingAddresses()->count());
     }
 }

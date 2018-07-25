@@ -69,15 +69,23 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
     {
         $user = User::findOne($this->validUsers['user0']['id']);
         $userComments = Comment::find()
-            ->andWhere(['commentable_id' => $user->id, 'commentable_type' => User::class])
-            ->all();
+            ->andWhere(
+                [
+                    'commentable_id' => $user->id,
+                    'commentable_type' => User::class
+                ]
+            )->all();
         $userCommentsTest = $user->getComments()->all();
         $this->assertEquals($userComments, $userCommentsTest);
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
         $companyComments = Comment::find()
-            ->andWhere(['commentable_id' => $company->id, 'commentable_type' => Company::class])
-            ->all();
+            ->andWhere(
+                [
+                    'commentable_id' => $company->id,
+                    'commentable_type' => Company::class
+                ]
+            )->all();
         $companyCommentsTest = $company->getComments()->all();
         $this->assertEquals($companyComments, $companyCommentsTest);
     }
@@ -93,10 +101,12 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
         $comment = new Comment();
         $comment->body = $this->faker->text;
         $this->assertNull($user->link('comments', $comment));
-        $this->tester->seeInDatabase('comment', [
-            'commentable_id' => $user->id,
-            'commentable_type' => User::class,
-        ]);
+        $this->tester->seeInDatabase(
+            'comment', [
+                'commentable_id' => $user->id,
+                'commentable_type' => User::class
+            ]
+        );
         $this->assertEquals($count + 1, $user->getComments()->count());
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
@@ -104,10 +114,12 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
         $comment = new Comment();
         $comment->body = $this->faker->text;
         $this->assertNull($company->link('comments', $comment));
-        $this->tester->seeInDatabase('comment', [
-            'commentable_id' => $company->id,
-            'commentable_type' => Company::class,
-        ]);
+        $this->tester->seeInDatabase(
+            'comment', [
+                'commentable_id' => $company->id,
+                'commentable_type' => Company::class
+            ]
+        );
         $this->assertEquals($count + 1, $company->getComments()->count());
     }
 
@@ -121,9 +133,11 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
             if (($user = User::findOne($item['id'])) && ($comment = $user->getComments()->one())) {
                 $count = $user->getComments()->count();
                 $this->assertNull($user->unlink('comments', $comment, true));
-                $this->tester->dontSeeInDatabase('comment', [
-                    'id' => $comment->id
-                ]);
+                $this->tester->dontSeeInDatabase(
+                    'comment', [
+                        'id' => $comment->id
+                    ]
+                );
                 $this->assertEquals($count ? $count - 1 : $count, $user->getComments()->count());
                 break;
             }
@@ -133,9 +147,11 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
             if (($company = Company::findOne($item['id'])) && ($comment = $company->getComments()->one())) {
                 $count = $company->getComments()->count();
                 $this->assertNull($company->unlink('comments', $comment, true));
-                $this->tester->dontSeeInDatabase('comment', [
-                    'id' => $comment->id
-                ]);
+                $this->tester->dontSeeInDatabase(
+                    'comment', [
+                        'id' => $comment->id
+                    ]
+                );
                 $this->assertEquals($count ? $count - 1 : $count, $company->getComments()->count());
                 break;
             }
@@ -151,19 +167,24 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
         $user = User::findOne($this->validUsers['user3']['id']);
 
         $this->assertNull($user->unlinkAll('comments', true));
-        $this->tester->dontSeeInDatabase('comment', [
-            'commentable_id' => $user->id,
-            'commentable_type' => User::class,
-        ]);
+        $this->tester->dontSeeInDatabase(
+            'comment', [
+                'commentable_id' => $user->id,
+                'commentable_type' => User::class
+            ]
+        );
         $this->assertEquals(0, $user->getComments()->count());
 
         $company = Company::findOne($this->validCompanies['company3']['id']);
 
         $this->assertNull($this->assertNull($company->unlinkAll('comments', true)));
-        $this->tester->dontSeeInDatabase('comment', [
-            'commentable_id' => $company->id,
-            'commentable_type' => Company::class,
-        ]);
+        $this->tester->dontSeeInDatabase(
+            'comment',
+            [
+                'commentable_id' => $company->id,
+                'commentable_type' => Company::class
+            ]
+        );
         $this->assertEquals(0, $company->getComments()->count());
     }
 }

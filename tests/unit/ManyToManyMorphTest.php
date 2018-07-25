@@ -108,11 +108,13 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
         $tag->name = $this->faker->word;
         $this->assertTrue($tag->save());
         $this->assertNull($user->link('tags', $tag, ['tag_id' => $tag->id]));
-        $this->tester->seeInDatabase('taggable', [
-            'tag_id' => $tag->id,
-            'taggable_id' => $user->id,
-            'taggable_type' => User::class,
-        ]);
+        $this->tester->seeInDatabase(
+            'taggable', [
+                'tag_id' => $tag->id,
+                'taggable_id' => $user->id,
+                'taggable_type' => User::class,
+            ]
+        );
         $this->assertEquals($count + 1, $user->getTags()->count());
 
         $company = Company::findOne($this->validCompanies['company0']['id']);
@@ -121,11 +123,13 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
         $tag->name = $this->faker->word;
         $this->assertTrue($tag->save());
         $this->assertNull($company->link('tags', $tag, ['tag_id' => $tag->id]));
-        $this->tester->seeInDatabase('taggable', [
-            'tag_id' => $tag->id,
-            'taggable_id' => $company->id,
-            'taggable_type' => Company::class,
-        ]);
+        $this->tester->seeInDatabase(
+            'taggable', [
+                'tag_id' => $tag->id,
+                'taggable_id' => $company->id,
+                'taggable_type' => Company::class,
+            ]
+        );
         $this->assertEquals($count + 1, $company->getTags()->count());
     }
 
@@ -139,7 +143,8 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
             if (($user = User::findOne($item['id'])) && ($tag = $user->getTags()->one())) {
                 $count = $user->getTags()->count();
                 $this->assertNull($user->unlink('tags', $tag, true));
-                $this->tester->dontSeeInDatabase('taggable', [
+                $this->tester->dontSeeInDatabase(
+                    'taggable', [
                     'tag_id' => $tag->id,
                     'taggable_id' => $user->id,
                     'taggable_type' => User::class
@@ -153,11 +158,13 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
             if (($company = Company::findOne($item['id'])) && ($tag = $company->getTags()->one())) {
                 $count = $company->getTags()->count();
                 $this->assertNull($company->unlink('tags', $tag, true));
-                $this->tester->dontSeeInDatabase('taggable', [
-                    'tag_id' => $tag->id,
-                    'taggable_id' => $company->id,
-                    'taggable_type' => Company::class
-                ]);
+                $this->tester->dontSeeInDatabase(
+                    'taggable', [
+                        'tag_id' => $tag->id,
+                        'taggable_id' => $company->id,
+                        'taggable_type' => Company::class
+                    ]
+                );
                 $this->assertEquals($count ? $count - 1 : $count, $company->getTags()->count());
                 break;
             }
@@ -173,19 +180,24 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
         $user = User::findOne($this->validUsers['user4']['id']);
 
         $this->assertNull($user->unlinkAll('tags', true));
-        $this->tester->dontSeeInDatabase('taggable', [
-            'taggable_id' => $user->id,
-            'taggable_type' => User::class,
-        ]);
+        $this->tester->dontSeeInDatabase(
+            'taggable', [
+                'taggable_id' => $user->id,
+                'taggable_type' => User::class,
+            ]
+        );
         $this->assertEquals(0, $user->getTags()->count());
 
         $company = Company::findOne($this->validCompanies['company4']['id']);
 
         $this->assertNull($company->unlinkAll('tags', true));
-        $this->tester->dontSeeInDatabase('taggable', [
-            'taggable_id' => $company->id,
-            'taggable_type' => Company::class,
-        ]);
+        $this->tester->dontSeeInDatabase(
+            'taggable',
+            [
+                'taggable_id' => $company->id,
+                'taggable_type' => Company::class,
+            ]
+        );
         $this->assertEquals(0, $company->getTags()->count());
     }
 }
