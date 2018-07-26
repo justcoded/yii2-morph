@@ -9,7 +9,6 @@ use app\fixtures\MediaFixture;
 use app\models\Company;
 use app\models\Media;
 use app\models\User;
-use Faker\Factory;
 
 /**
  * Class ManyToManyMorphWithExtraConditionTest
@@ -18,25 +17,14 @@ use Faker\Factory;
 class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
 {
     /**
-     * @var \UnitTester
+     * @var \Tightenco\Collect\Support\Collection
      */
-    protected $tester;
+    private $media;
 
     /**
-     * @var \Faker\Factory
+     * @var \Tightenco\Collect\Support\Collection
      */
-    protected $faker;
-
-    /**
-     * @var array
-     */
-    private $validUsers;
-
-    /**
-     * @var array
-     */
-    private $validCompanies;
-
+    private $mediables;
     /**
      * _fixtures
      *
@@ -56,11 +44,11 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      * _before
      *
      */
-    public function _before()
+    protected function _before()
     {
-        $this->faker = Factory::create();
-        $this->validUsers = $this->tester->grabFixture('user')->data;
-        $this->validCompanies = $this->tester->grabFixture('company')->data;
+        $this->tester->setCommonProperties();
+        $this->mediables = $this->tester->getFixtureData('mediable');
+        $this->media = $this->tester->getFixtureData('media');
     }
 
     /**
@@ -69,62 +57,59 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      */
     public function testGetData()
     {
-        $user = User::findOne($this->validUsers['user0']['id']);
-
-        $userMediaThumbnails = Media::find()
-            ->leftJoin('mediable', 'mediable.media_id = media.id')
-            ->andWhere(
-                [
-                    'mediable_id' => $user->id,
-                    'mediable_type' => User::class,
-                    'mediable.type' => Media::TYPE_THUMBNAIL
-                ]
-            )
+        $user = User::findOne($this->tester->users->first()['id']);
+        $userMediablesThumbnailsIds = $this->mediables
+            ->where('mediable_id', $user->id)
+            ->where('mediable_type', User::class)
+            ->where('mediable.type', Media::TYPE_THUMBNAIL)
+            ->keyBy('media_id')
+            ->keys();
+        $userMediaThumbnails = $this->media
+            ->whereIn('id', $userMediablesThumbnailsIds)
+            ->values()
             ->all();
-        $userMediaThumbnailsTest = $user->getThumbnail()->all();
+        $userMediaThumbnailsTest = $user->getThumbnail()->asArray()->all();
         $this->assertEquals($userMediaThumbnails, $userMediaThumbnailsTest);
 
-        $userMediaGallery = Media::find()
-            ->leftJoin('mediable', 'mediable.media_id = media.id')
-            ->andWhere(
-                [
-                    'mediable_id' => $user->id,
-                    'mediable_type' => User::class,
-                    'mediable.type' => Media::TYPE_GALLERY
-                ]
-            )
+        $userMediablesGalleryIds = $this->mediables
+            ->where('mediable_id', $user->id)
+            ->where('mediable_type', User::class)
+            ->where('mediable.type', Media::TYPE_GALLERY)
+            ->keyBy('media_id')
+            ->keys();
+        $userMediaGallery = $this->media
+            ->whereIn('id', $userMediablesGalleryIds)
+            ->values()
             ->all();
-        $userMediaGalleryTest = $user->getGallery()->all();
+        $userMediaGalleryTest = $user->getGallery()->asArray()->all();
         $this->assertEquals($userMediaGallery, $userMediaGalleryTest);
 
-        $company = Company::findOne($this->validCompanies['company0']['id']);
+        $company = Company::findOne($this->tester->companies->first()['id']);
 
-        $companyMediaThumbnails = Media::find()
-            ->leftJoin('mediable', 'mediable.media_id = media.id')
-            ->andWhere(
-                [
-                    'mediable_id' => $company->id,
-                    'mediable_type' => Company::class,
-                    'mediable.type' => Media::TYPE_THUMBNAIL
-                ]
-            )
+        $companyMediablesThumbnailsIds = $this->mediables
+            ->where('mediable_id', $company->id)
+            ->where('mediable_type', Company::class)
+            ->where('mediable.type', Media::TYPE_THUMBNAIL)
+            ->keyBy('media_id')
+            ->keys();
+        $companyMediaThumbnails = $this->media
+            ->whereIn('id', $companyMediablesThumbnailsIds)
+            ->values()
             ->all();
-        $companyMediaThumbnailsTest = $company->getThumbnail()->all();
+        $companyMediaThumbnailsTest = $company->getThumbnail()->asArray()->all();
         $this->assertEquals($companyMediaThumbnails, $companyMediaThumbnailsTest);
 
-        $company = Company::findOne($this->validCompanies['company0']['id']);
-
-        $companyMediaGallery = Media::find()
-            ->leftJoin('mediable', 'mediable.media_id = media.id')
-            ->andWhere(
-                [
-                    'mediable_id' => $company->id,
-                    'mediable_type' => Company::class,
-                    'mediable.type' => Media::TYPE_GALLERY
-                ]
-            )
+        $companyMediablesGalleryIds = $this->mediables
+            ->where('mediable_id', $company->id)
+            ->where('mediable_type', Company::class)
+            ->where('mediable.type', Media::TYPE_THUMBNAIL)
+            ->keyBy('media_id')
+            ->keys();
+        $companyMediaGallery = $this->media
+            ->whereIn('id', $companyMediablesGalleryIds)
+            ->values()
             ->all();
-        $companyMediaGalleryTest = $company->getThumbnail()->all();
+        $companyMediaGalleryTest = $company->getGallery()->asArray()->all();
         $this->assertEquals($companyMediaGallery, $companyMediaGalleryTest);
     }
 
@@ -134,13 +119,13 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      */
     public function testLink()
     {
-        $user = User::findOne($this->validUsers['user0']['id']);
+        $user = User::findOne($this->tester->users->first()['id']);
         $count = $user->getGallery()->count();
         $media = new Media();
-        $media->type = $this->faker->randomElement(['image', 'video', 'file']);
-        $media->file = 'tmp/' . $this->faker->md5 . '.' . $this->faker->fileExtension;
-        $media->thumb = $this->faker->imageUrl(
-            $this->faker->numberBetween(600, 1200), $this->faker->numberBetween(400, 800)
+        $media->type = $this->tester->faker->randomElement(['image', 'video', 'file']);
+        $media->file = 'tmp/' . $this->tester->faker->md5 . '.' . $this->tester->faker->fileExtension;
+        $media->thumb = $this->tester->faker->imageUrl(
+            $this->tester->faker->numberBetween(600, 1200), $this->tester->faker->numberBetween(400, 800)
         );
 
         $this->assertTrue($media->save());
@@ -156,13 +141,13 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
         );
         $this->assertEquals($count + 1, $user->getGallery()->count());
 
-        $company = Company::findOne($this->validCompanies['company0']['id']);
+        $company = Company::findOne($this->tester->companies->first()['id']);
         $count = $company->getGallery()->count();
         $media = new Media();
-        $media->type = $this->faker->randomElement(['image', 'video', 'file']);
-        $media->file = 'tmp/' . $this->faker->md5 . '.' . $this->faker->fileExtension;
-        $media->thumb = $this->faker->imageUrl(
-            $this->faker->numberBetween(600, 1200), $this->faker->numberBetween(400, 800)
+        $media->type = $this->tester->faker->randomElement(['image', 'video', 'file']);
+        $media->file = 'tmp/' . $this->tester->faker->md5 . '.' . $this->tester->faker->fileExtension;
+        $media->thumb = $this->tester->faker->imageUrl(
+            $this->tester->faker->numberBetween(600, 1200), $this->tester->faker->numberBetween(400, 800)
         );
         $this->assertTrue($media->save());
         $this->assertNull($company->link('thumbnail', $media, ['media_id' => $media->id]));
@@ -183,7 +168,7 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      */
     public function testUnlink()
     {
-        foreach ($this->validUsers as $item) {
+        foreach ($this->tester->users as $item) {
             if (($user = User::findOne($item['id'])) && ($media = $user->getThumbnail()->one())) {
                 $count = $user->getThumbnail()->count();
                 $this->assertNull($user->unlink('thumbnail', $media, true));
@@ -201,7 +186,7 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
             }
         }
 
-        foreach ($this->validCompanies as $item) {
+        foreach ($this->tester->companies as $item) {
             if (($company = Company::findOne($item['id'])) && ($media = $company->getGallery()->one())) {
                 $count = $user->getGallery()->count();
                 $this->assertNull($company->unlink('gallery', $media, true));
@@ -226,7 +211,7 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      */
     public function testUnlinkAll()
     {
-        $user = User::findOne($this->validUsers['user4']['id']);
+        $user = User::findOne($this->tester->users->firstWhere('id', '4')['id']);
 
         $this->assertNull($user->unlinkAll('gallery', true));
         $this->tester->dontSeeInDatabase(
@@ -250,7 +235,7 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
         );
         $this->assertEquals(0, $user->getThumbnail()->count());
 
-        $company = Company::findOne($this->validCompanies['company4']['id']);
+        $company = Company::findOne($this->tester->companies->firstWhere('id', '4')['id']);
 
         $this->assertNull($company->unlinkAll('gallery', true));
         $this->tester->dontSeeInDatabase(

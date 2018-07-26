@@ -1,5 +1,6 @@
 <?php
 
+use Faker\Factory;
 
 /**
  * Inherited Methods
@@ -20,7 +21,40 @@ class UnitTester extends \Codeception\Actor
 {
     use _generated\UnitTesterActions;
 
-   /**
-    * Define custom actions here
-    */
+    /**
+     * @var \Faker\Factory
+     */
+    public $faker;
+
+    /**
+     * @var \Tightenco\Collect\Support\Collection
+     */
+    public $users;
+
+    /**
+     * @var \Tightenco\Collect\Support\Collection
+     */
+    public $companies;
+
+    /**
+     * Get Fixture Data
+     *
+     * @param $name
+     * @return \Tightenco\Collect\Support\Collection
+     */
+    public function getFixtureData($name)
+    {
+        return collect($this->grabFixture($name)->data)->values();
+    }
+
+    /**
+     * Set Properties
+     *
+     */
+    public function setCommonProperties()
+    {
+        $this->faker = Factory::create();
+        $this->users = $this->getFixtureData('user');
+        $this->companies = $this->getFixtureData('company');
+    }
 }

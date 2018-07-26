@@ -9,7 +9,6 @@ use app\fixtures\TaggableFixture;
 use app\models\Company;
 use app\models\Tag;
 use app\models\User;
-use Faker\Factory;
 
 /**
  * Class ManyToManyMorphTest
@@ -23,19 +22,14 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
     protected $tester;
 
     /**
-     * @var \Faker\Factory
+     * @var \Tightenco\Collect\Support\Collection
      */
-    protected $faker;
+    private $tags;
 
     /**
-     * @var array
+     * @var \Tightenco\Collect\Support\Collection
      */
-    private $validUsers;
-
-    /**
-     * @var array
-     */
-    private $validCompanies;
+    private $taggables;
 
     /**
      * _fixtures
@@ -56,11 +50,11 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
      * _before
      *
      */
-    public function _before()
+    protected function _before()
     {
-        $this->faker = Factory::create();
-        $this->validUsers = $this->tester->grabFixture('user')->data;
-        $this->validCompanies = $this->tester->grabFixture('company')->data;
+        $this->tester->setCommonProperties();
+        $this->taggables = $this->tester->getFixtureData('taggable');
+        $this->tags = $this->tester->getFixtureData('tag');
     }
 
     /**
@@ -69,30 +63,30 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
      */
     public function testGetData()
     {
-        $user = User::findOne($this->validUsers['user0']['id']);
-        $userTags = Tag::find()
-            ->leftJoin('taggable', 'taggable.tag_id = tag.id')
-            ->andWhere(
-                [
-                    'taggable_id' => $user->id,
-                    'taggable_type' => User::class,
-                ]
-            )
+        $user = User::findOne($this->tester->users->first()['id']);
+        $userTaggables = $this->taggables
+            ->where('taggable_id', $user->id)
+            ->where('taggable_type', User::class)
+            ->keyBy('tag_id')
+            ->keys();
+        $userTags = $this->tags
+            ->whereIn('id', $userTaggables)
+            ->values()
             ->all();
-        $userTagsTest = $user->getTags()->all();
+        $userTagsTest = $user->getTags()->asArray()->all();
         $this->assertEquals($userTags, $userTagsTest);
 
-        $company = Company::findOne($this->validCompanies['company0']['id']);
-        $companyTags = Tag::find()
-            ->leftJoin('taggable', 'taggable.tag_id = tag.id')
-            ->andWhere(
-                [
-                    'taggable_id' => $company->id,
-                    'taggable_type' => Company::class,
-                ]
-            )
+        $company = Company::findOne($this->tester->companies->first()['id']);
+        $companyTaggables = $this->taggables
+            ->where('taggable_id', $company->id)
+            ->where('taggable_type', Company::class)
+            ->keyBy('tag_id')
+            ->keys();
+        $companyTags = $this->tags
+            ->whereIn('id', $companyTaggables)
+            ->values()
             ->all();
-        $companyTagsTest = $company->getTags()->all();
+        $companyTagsTest = $company->getTags()->asArray()->all();
         $this->assertEquals($companyTags, $companyTagsTest);
     }
 
@@ -102,10 +96,10 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
      */
     public function testLink()
     {
-        $user = User::findOne($this->validUsers['user0']['id']);
+        $user = User::findOne($this->tester->users->first()['id']);
         $count = $user->getTags()->count();
         $tag = new Tag();
-        $tag->name = $this->faker->word;
+        $tag->name = $this->tester->faker->word;
         $this->assertTrue($tag->save());
         $this->assertNull($user->link('tags', $tag, ['tag_id' => $tag->id]));
         $this->tester->seeInDatabase(
@@ -117,10 +111,10 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
         );
         $this->assertEquals($count + 1, $user->getTags()->count());
 
-        $company = Company::findOne($this->validCompanies['company0']['id']);
+        $company = Company::findOne($this->tester->companies->first()['id']);
         $count = $company->getTags()->count();
         $tag = new Tag();
-        $tag->name = $this->faker->word;
+        $tag->name = $this->tester->faker->word;
         $this->assertTrue($tag->save());
         $this->assertNull($company->link('tags', $tag, ['tag_id' => $tag->id]));
         $this->tester->seeInDatabase(
@@ -139,7 +133,7 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
      */
     public function testUnlink()
     {
-        foreach ($this->validUsers as $item) {
+        foreach ($this->tester->users as $item) {
             if (($user = User::findOne($item['id'])) && ($tag = $user->getTags()->one())) {
                 $count = $user->getTags()->count();
                 $this->assertNull($user->unlink('tags', $tag, true));
@@ -154,7 +148,7 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
             }
         }
 
-        foreach ($this->validCompanies as $item) {
+        foreach ($this->tester->companies as $item) {
             if (($company = Company::findOne($item['id'])) && ($tag = $company->getTags()->one())) {
                 $count = $company->getTags()->count();
                 $this->assertNull($company->unlink('tags', $tag, true));
@@ -177,7 +171,7 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
      */
     public function testUnlinkAll()
     {
-        $user = User::findOne($this->validUsers['user4']['id']);
+        $user = User::findOne($this->tester->users->firstWhere('id', '4')['id']);
 
         $this->assertNull($user->unlinkAll('tags', true));
         $this->tester->dontSeeInDatabase(
@@ -188,7 +182,7 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
         );
         $this->assertEquals(0, $user->getTags()->count());
 
-        $company = Company::findOne($this->validCompanies['company4']['id']);
+        $company = Company::findOne($this->tester->companies->firstWhere('id', '4')['id']);
 
         $this->assertNull($company->unlinkAll('tags', true));
         $this->tester->dontSeeInDatabase(
