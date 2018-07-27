@@ -141,6 +141,17 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
         );
         $this->assertEquals($count + 1, $user->getGallery()->count());
 
+        $userNeighbour = User::findOne($this->tester->users->firstWhere('id', '2')['id']);
+        $this->tester->dontSeeInDatabase(
+            'mediable',
+            [
+                'media_id' => $media->id,
+                'mediable_id' => $userNeighbour->id,
+                'mediable_type' => User::class,
+                'type' => 'gallery'
+            ]
+        );
+
         $company = Company::findOne($this->tester->companies->first()['id']);
         $count = $company->getGallery()->count();
         $media = new Media();
@@ -160,6 +171,17 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
             ]
         );
         $this->assertEquals($count + 1, $company->getThumbnail()->count());
+
+        $companyNeighbour = User::findOne($this->tester->users->firstWhere('id', '2')['id']);
+        $this->tester->dontSeeInDatabase(
+            'mediable',
+            [
+                'media_id' => $media->id,
+                'mediable_id' => $companyNeighbour->id,
+                'mediable_type' => Company::class,
+                'type' => 'thumbnail'
+            ]
+        );
     }
 
     /**
@@ -168,41 +190,57 @@ class ManyToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      */
     public function testUnlink()
     {
-        foreach ($this->tester->users as $item) {
-            if (($user = User::findOne($item['id'])) && ($media = $user->getThumbnail()->one())) {
-                $count = $user->getThumbnail()->count();
-                $this->assertNull($user->unlink('thumbnail', $media, true));
-                $this->tester->dontSeeInDatabase(
-                    'mediable',
-                    [
-                        'media_id' => $media->id,
-                        'mediable_id' => $user->id,
-                        'mediable_type' => User::class,
-                        'type' => 'thumbnail'
-                    ]
-                );
-                $this->assertEquals($count ? $count - 1 : $count, $user->getThumbnail()->count());
-                break;
-            }
-        }
+        $user = User::findOne($this->tester->users->firstWhere('id', '2')['id']);
 
-        foreach ($this->tester->companies as $item) {
-            if (($company = Company::findOne($item['id'])) && ($media = $company->getGallery()->one())) {
-                $count = $user->getGallery()->count();
-                $this->assertNull($company->unlink('gallery', $media, true));
-                $this->tester->dontSeeInDatabase(
-                    'mediable',
-                    [
-                        'media_id' => $media->id,
-                        'mediable_id' => $company->id,
-                        'mediable_type' => Company::class,
-                        'type' => 'gallery'
-                    ]
-                );
-                $this->assertEquals($count ? $count - 1 : $count, $company->getGallery()->count());
-                break;
-            }
-        }
+        $media = new Media();
+        $media->type = $this->tester->faker->randomElement(['image', 'video', 'file']);
+        $media->file = 'tmp/' . $this->tester->faker->md5 . '.' . $this->tester->faker->fileExtension;
+        $media->thumb = $this->tester->faker->imageUrl(
+            $this->tester->faker->numberBetween(600, 1200), $this->tester->faker->numberBetween(400, 800)
+        );
+
+        $this->assertTrue($media->save());
+        $this->assertNull($user->link('gallery', $media, ['media_id' => $media->id]));
+
+        $count = $user->getGallery()->count();
+        $this->assertNull($user->unlink('comments', $media, true));
+        $this->tester->dontSeeInDatabase(
+            'media', [
+                'id' => $media->id
+            ]
+        );
+        $this->tester->dontSeeInDatabase(
+            'mediable', [
+                'media_id' => $media->id
+            ]
+        );
+        $this->assertEquals($count - 1, $user->getGallery()->count());
+
+        $company = Company::findOne($this->tester->companies->firstWhere('id', '2')['id']);
+
+        $media = new Media();
+        $media->type = $this->tester->faker->randomElement(['image', 'video', 'file']);
+        $media->file = 'tmp/' . $this->tester->faker->md5 . '.' . $this->tester->faker->fileExtension;
+        $media->thumb = $this->tester->faker->imageUrl(
+            $this->tester->faker->numberBetween(600, 1200), $this->tester->faker->numberBetween(400, 800)
+        );
+
+        $this->assertTrue($media->save());
+        $this->assertNull($company->link('thumbnail', $media, ['media_id' => $media->id]));
+
+        $count = $company->getThumbnail()->count();
+        $this->assertNull($company->unlink('comments', $media, true));
+        $this->tester->dontSeeInDatabase(
+            'media', [
+                'id' => $media->id
+            ]
+        );
+        $this->tester->dontSeeInDatabase(
+            'mediable', [
+                'media_id' => $media->id
+            ]
+        );
+        $this->assertEquals($count - 1, $company->getThumbnail()->count());
     }
 
     /**

@@ -87,6 +87,7 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
         $this->assertNull($user->link('comments', $comment));
         $this->tester->seeInDatabase(
             'comment', [
+                'id' => $comment->id,
                 'commentable_id' => $user->id,
                 'commentable_type' => User::class
             ]
@@ -100,6 +101,7 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
         $this->assertNull($company->link('comments', $comment));
         $this->tester->seeInDatabase(
             'comment', [
+                'id' => $comment->id,
                 'commentable_id' => $company->id,
                 'commentable_type' => Company::class
             ]
@@ -113,33 +115,33 @@ class OneToManyMorphTest extends \Codeception\Test\Unit
      */
     public function testUnlink()
     {
-        foreach ($this->tester->users as $item) {
-            if (($user = User::findOne($item['id'])) && ($comment = $user->getComments()->one())) {
-                $count = $user->getComments()->count();
-                $this->assertNull($user->unlink('comments', $comment, true));
-                $this->tester->dontSeeInDatabase(
-                    'comment', [
-                        'id' => $comment->id
-                    ]
-                );
-                $this->assertEquals($count ? $count - 1 : $count, $user->getComments()->count());
-                break;
-            }
-        }
+        $user = User::findOne($this->tester->users->firstWhere('id', '2')['id']);
 
-        foreach ($this->tester->companies as $item) {
-            if (($company = Company::findOne($item['id'])) && ($comment = $company->getComments()->one())) {
-                $count = $company->getComments()->count();
-                $this->assertNull($company->unlink('comments', $comment, true));
-                $this->tester->dontSeeInDatabase(
-                    'comment', [
-                        'id' => $comment->id
-                    ]
-                );
-                $this->assertEquals($count ? $count - 1 : $count, $company->getComments()->count());
-                break;
-            }
-        }
+        $comment = new Comment();
+        $comment->body = $this->tester->faker->text;
+        $this->assertNull($user->link('comments', $comment));
+        $count = $user->getComments()->count();
+        $this->assertNull($user->unlink('comments', $comment, true));
+        $this->tester->dontSeeInDatabase(
+            'comment', [
+                'id' => $comment->id
+            ]
+        );
+        $this->assertEquals($count - 1, $user->getComments()->count());
+
+        $company = Company::findOne($this->tester->companies->firstWhere('id', '2')['id']);
+
+        $comment = new Comment();
+        $comment->body = $this->tester->faker->text;
+        $this->assertNull($company->link('comments', $comment));
+        $count = $company->getComments()->count();
+        $this->assertNull($company->unlink('comments', $comment, true));
+        $this->tester->dontSeeInDatabase(
+            'comment', [
+                'id' => $comment->id
+            ]
+        );
+        $this->assertEquals($count - 1, $company->getComments()->count());
     }
 
     /**

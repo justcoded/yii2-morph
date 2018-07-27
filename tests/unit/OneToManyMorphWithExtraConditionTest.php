@@ -90,6 +90,7 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
         $this->assertNull($user->link('shippingAddresses', $address));
         $this->tester->seeInDatabase(
             'address', [
+                'id' => $address->id,
                 'addressable_id' => $user->id,
                 'addressable_type' => User::class,
                 'type' => 'shipping'
@@ -106,6 +107,7 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
         $this->assertNull($company->link('billingAddresses', $address));
         $this->tester->seeInDatabase(
             'address', [
+                'id' => $address->id,
                 'addressable_id' => $company->id,
                 'addressable_type' => Company::class,
                 'type' => 'billing'
@@ -120,33 +122,37 @@ class OneToManyMorphWithExtraConditionTest extends \Codeception\Test\Unit
      */
     public function testUnlink()
     {
-        foreach ($this->tester->users as $item) {
-            if (($user = User::findOne($item['id'])) && ($address = $user->getShippingAddresses()->one())) {
-                $count = $user->getShippingAddresses()->count();
-                $this->assertNull($user->unlink('shippingAddresses', $address, true));
-                $this->tester->dontSeeInDatabase(
-                    'address', [
-                    'id' => $address->id
-                    ]
-                );
-                $this->assertEquals($count ? $count - 1 : $count, $user->getShippingAddresses()->count());
-                break;
-            }
-        }
+        $user = User::findOne($this->tester->users->firstWhere('id', '2')['id']);
 
-        foreach ($this->tester->companies as $item) {
-            if (($company = Company::findOne($item['id'])) && ($address = $company->getBillingAddresses()->one())) {
-                $count = $company->getBillingAddresses()->count();
-                $this->assertNull($company->unlink('billingAddresses', $address, true));
-                $this->tester->dontSeeInDatabase(
-                    'address', [
-                        'id' => $address->id
-                    ]
-                );
-                $this->assertEquals($count ? $count - 1 : $count, $company->getBillingAddresses()->count());
-                break;
-            }
-        }
+        $address = new Address();
+        $address->addressable_id = $user->id;
+        $address->city = $this->tester->faker->city;
+        $address->street = $this->tester->faker->streetAddress;
+        $this->assertNull($user->link('shippingAddresses', $address));
+        $count = $user->getShippingAddresses()->count();
+        $this->assertNull($user->unlink('comments', $address, true));
+        $this->tester->dontSeeInDatabase(
+            'address', [
+                'id' => $address->id
+            ]
+        );
+        $this->assertEquals($count - 1, $user->getShippingAddresses()->count());
+
+        $company = Company::findOne($this->tester->companies->firstWhere('id', '2')['id']);
+
+        $address = new Address();
+        $address->addressable_id = $company->id;
+        $address->city = $this->tester->faker->city;
+        $address->street = $this->tester->faker->streetAddress;
+        $this->assertNull($company->link('billingAddresses', $address));
+        $count = $company->getBillingAddresses()->count();
+        $this->assertNull($company->unlink('comments', $address, true));
+        $this->tester->dontSeeInDatabase(
+            'address', [
+                'id' => $address->id
+            ]
+        );
+        $this->assertEquals($count - 1, $company->getBillingAddresses()->count());
     }
 
     /**

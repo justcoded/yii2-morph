@@ -111,6 +111,15 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
         );
         $this->assertEquals($count + 1, $user->getTags()->count());
 
+        $userNeighbour = User::findOne($this->tester->users->firstWhere('id', '2')['id']);
+        $this->tester->dontSeeInDatabase(
+            'taggable', [
+                'tag_id' => $tag->id,
+                'taggable_id' => $userNeighbour->id,
+                'taggable_type' => User::class,
+            ]
+        );
+
         $company = Company::findOne($this->tester->companies->first()['id']);
         $count = $company->getTags()->count();
         $tag = new Tag();
@@ -125,6 +134,15 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
             ]
         );
         $this->assertEquals($count + 1, $company->getTags()->count());
+
+        $companyNeighbour = Company::findOne($this->tester->users->firstWhere('id', '2')['id']);
+        $this->tester->dontSeeInDatabase(
+            'taggable', [
+                'tag_id' => $tag->id,
+                'taggable_id' => $companyNeighbour->id,
+                'taggable_type' => Company::class,
+            ]
+        );
     }
 
     /**
@@ -133,36 +151,45 @@ class ManyToManyMorphTest extends \Codeception\Test\Unit
      */
     public function testUnlink()
     {
-        foreach ($this->tester->users as $item) {
-            if (($user = User::findOne($item['id'])) && ($tag = $user->getTags()->one())) {
-                $count = $user->getTags()->count();
-                $this->assertNull($user->unlink('tags', $tag, true));
-                $this->tester->dontSeeInDatabase(
-                    'taggable', [
-                    'tag_id' => $tag->id,
-                    'taggable_id' => $user->id,
-                    'taggable_type' => User::class
-                ]);
-                $this->assertEquals($count ? $count - 1 : $count, $user->getTags()->count());
-                break;
-            }
-        }
+        $user = User::findOne($this->tester->users->firstWhere('id', '2')['id']);
 
-        foreach ($this->tester->companies as $item) {
-            if (($company = Company::findOne($item['id'])) && ($tag = $company->getTags()->one())) {
-                $count = $company->getTags()->count();
-                $this->assertNull($company->unlink('tags', $tag, true));
-                $this->tester->dontSeeInDatabase(
-                    'taggable', [
-                        'tag_id' => $tag->id,
-                        'taggable_id' => $company->id,
-                        'taggable_type' => Company::class
-                    ]
-                );
-                $this->assertEquals($count ? $count - 1 : $count, $company->getTags()->count());
-                break;
-            }
-        }
+        $tag = new Tag();
+        $tag->name = $this->tester->faker->word;
+        $this->assertTrue($tag->save());
+        $this->assertNull($user->link('tags', $tag, ['tag_id' => $tag->id]));
+        $count = $user->getTags()->count();
+        $this->assertNull($user->unlink('comments', $tag, true));
+        $this->tester->dontSeeInDatabase(
+            'tag', [
+                'id' => $tag->id
+            ]
+        );
+        $this->tester->dontSeeInDatabase(
+            'taggable', [
+                'tag_id' => $tag->id
+            ]
+        );
+        $this->assertEquals($count - 1, $user->getTags()->count());
+
+        $company = Company::findOne($this->tester->companies->firstWhere('id', '2')['id']);
+
+        $tag = new Tag();
+        $tag->name = $this->tester->faker->word;
+        $this->assertTrue($tag->save());
+        $this->assertNull($company->link('tags', $tag, ['tag_id' => $tag->id]));
+        $count = $company->getTags()->count();
+        $this->assertNull($company->unlink('comments', $tag, true));
+        $this->tester->dontSeeInDatabase(
+            'tag', [
+                'id' => $tag->id
+            ]
+        );
+        $this->tester->dontSeeInDatabase(
+            'taggable', [
+                'tag_id' => $tag->id
+            ]
+        );
+        $this->assertEquals($count - 1, $company->getTags()->count());
     }
 
     /**
