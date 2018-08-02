@@ -5,7 +5,7 @@
  * @license https://justcoded.com/privacy/
  */
 
-namespace justcoded\yii2\filestorage\db;
+namespace justcoded\yii2\morph\db;
 
 use yii\base\Behavior;
 
